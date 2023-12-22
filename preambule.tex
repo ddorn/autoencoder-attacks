@@ -1,0 +1,617 @@
+% \newcommand{\lang}{french}  % Copy this in a french document
+% \newcommand{\UseWhiteBackground}{1}  % Copy this to have a white document
+
+\usepackage[utf8]{inputenc}
+\usepackage{standalone}
+\usepackage{etoolbox}
+\ifdef{\lang}{}{\newcommand{\lang}{english}}  % If no \lang command is defined, default to english
+\usepackage[\lang]{babel}
+\usepackage{amssymb,amsmath,amsthm,epsfig,eepic,epic,verbatim,moreverb,fancybox}
+\usepackage{stmaryrd}  % for \llbracket and \rrbracket
+\usepackage{wasysym}
+% \usepackage{bbold}  % NO! DON"T USE IT. It add mathbb for integers but makes it ugly for letters.
+\usepackage{dsfont}
+% \usepackage{tocstyle}  % To change the table of contents (TOC) style, and that's what we do next
+% \usetocstyle{nopagecolumn}  % One of classic, KOMAlike, nopagecolumn, allwithdot, noonewithdot, standard
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usetikzlibrary{calc,math,decorations.markings,decorations.pathmorphing,arrows,shadows,shapes.geometric,shapes.multipart,patterns,automata,backgrounds}
+\usepackage{rotating}  % To have large figures in lanscape with \begin{sidewaysfigure} ... \end{sidewaysfigure}
+\usepackage{pdflscape}  % To change one page to landscape
+\usepackage{multicol}  % For the \begin{multicol}{N} environement
+\usepackage{wrapfig}   % For the \begin{wrapfig}{r|l}{4cm} environement that behave like html float
+\usepackage{subcaption}  % To use the subfigure environement in figure environements
+\usepackage{mathtools}  % For the \xSOMETHINGarrow that we can write on top and change length
+\usepackage{xspace}  % To add a space in commands when the following is not pounctuation
+\usepackage{todonotes}  % To add todos in the margin of a document with \todo. Also \listoftodos is nice !
+\usepackage{graphicx}  % many operations like rotating text etc...
+\usepackage{ifthen}
+\usepackage{xifthen}
+\usepackage{float}  % To have the [H] option for figure so that they don't float. Use only if really needed.
+\usepackage{pdfpages}
+\usepackage{enumerate}  % To be able to change the numbering of enumerate environements with [i)] or [a.]...
+\usepackage{enumitem}  % To manage the spacing of items and margins
+\usepackage{forest}  % For automatic tikz layout
+\usepackage[framemethod=tikz]{mdframed}  % Frame around theorems
+\usepackage{thmtools}  % Fixes the issue with \autoref and shared counters for thm env. Probably lots of other things also...
+\usepackage{listings}
+% \usepackage{minted}
+\usepackage{pbox}  % A variable width parbox
+\usepackage{xcolor}
+
+\definecolor{airforceblue}{rgb}{0.36, 0.54, 0.66}
+\definecolor{awesome}{rgb}{1.0, 0.13, 0.32}
+\definecolor{bondiblue}{rgb}{0.0, 0.58, 0.71}
+\definecolor{atomictangerine}{rgb}{1.0, 0.6, 0.4}
+\definecolor{ghostwhite}{rgb}{0.97, 0.97, 1.0}
+
+% creamy background
+\ifdef{\UseWhiteBackground}{  % White, default
+    \definecolor{myBGcolor}{HTML}{FFFFFF}
+    \definecolor{myTextcolor}{HTML}{000000}
+    \definecolor{linkColor}{HTML}{044F67}
+
+    % \colorlet{linkColor}{orange!60!blue}
+    \colorlet{myRed}{awesome!10!myBGcolor}
+    \colorlet{myGreen}{airforceblue!15!myBGcolor}
+}{  % Cream
+    \definecolor{myBGcolor}{HTML}{E6E0C6}
+    \definecolor{myTextcolor}{HTML}{2F251C}
+    \colorlet{linkColor}{orange!70!blue}
+
+    \pagecolor{myBGcolor}
+    \color{myTextcolor}
+
+    \colorlet{myRed}{orange!10!myBGcolor}
+    \colorlet{myGreen}{green!10!myBGcolor}
+}
+
+
+\usepackage{hyperref}  % Always include it last, as it overrides a lot of commands.
+\hypersetup{
+    % bookmarks=true,
+    % pdfpagemode=FullScreen,  % Only for presentations
+    pdfauthor={Diego Dorn},
+    pdftitle={ok},
+    colorlinks=true,
+    allcolors=linkColor
+    % linkcolor=blue,
+    % urlcolor={winered},
+    % filecolor={winered},
+    % citecolor={winered},
+    % allcolors={orange},
+    % linktoc=all,
+}
+
+% \usepackage{cleveref}  % Needs to be after hyperref
+
+\addto\extrasenglish{%
+    \renewcommand{\subsectionautorefname}{Section}  % Change name of subsection in autoref to be more uniform
+}
+
+
+% Tool to translate commands
+% The first argument is the english text, the second is in french
+\newcommand{\ifenglish}[2]{\ifthenelse{\equal{\lang}{english}}{#1}{#2}}
+
+% Frames
+\mdfdefinestyle{theoremstyle}{%
+roundcorner=0pt, % round corners, makes it friendlier
+leftmargin=1pt, rightmargin=1pt, % this helps with box warnings
+innerbottommargin=12pt,
+hidealllines=true, % even friendlier
+align=center, %
+}
+
+% Theorem environements
+\theoremstyle{definition}   % Not in italics
+\ifenglish{
+    \newtheorem{theorem}{Theorem}[section]
+    \newtheorem*{theorem*}{Theorem}
+    \newtheorem{theoremx}{Theorem}
+    \newtheorem{definition}[theorem]{Definition}
+    \newtheorem{notation}[theorem]{Notation}
+    \newtheorem{corollary}[theorem]{Corollary}
+    \newtheorem{proposition}[theorem]{Proposition}
+    \newtheorem*{proposition*}{Proposition}
+    \newtheorem{lemma}[theorem]{Lemma}
+    \newtheorem*{lemma*}{Lemma}
+    \newtheorem*{remark}{Remark}
+    \newtheorem*{claim}{Claim}
+    \newtheorem*{example}{Example}
+    \newtheorem*{examples}{Examples}
+    \newtheorem*{exercise}{Exercise}
+}{
+    \newtheorem{theorem}{Théorème}[section]
+    \newtheorem*{theorem*}{Théorème}
+    \newtheorem{theoremx}{Théorème}
+    \newtheorem{definition}[theorem]{Définition}
+    \newtheorem{notation}[theorem]{Notation}
+    \newtheorem{corollary}[theorem]{Corrolaire}
+    \newtheorem{proposition}[theorem]{Proposition}
+    \newtheorem{lemma}[theorem]{Lemme}
+    \newtheorem*{remark}{Remarque}
+    \newtheorem*{claim}{Assertion}
+    \newtheorem*{example}{Exemple}
+    \newtheorem*{examples}{Exemples}
+    \newtheorem*{exercise}{Exercise}
+}
+\renewcommand{\thetheoremx}{\Alph{thmx}} % "letter-numbered" theorems
+
+
+\surroundwithmdframed[style=theoremstyle,backgroundcolor=myRed]{theorem}
+\surroundwithmdframed[style=theoremstyle,backgroundcolor=myRed]{theorem*}
+\surroundwithmdframed[style=theoremstyle,backgroundcolor=myGreen]{definition}
+
+%%%%%%%%%%%%%%%%%%%
+%   Parenthesis   %
+%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\parenthesis}[1]{\left(#1\right)}
+\newcommand{\bigparenthesis}[1]{\big(#1\big)}
+\newcommand{\Bigparenthesis}[1]{\Big(#1\Big)}
+\newcommand{\Par}[2][]{
+    \ifthenelse{\isempty{#1}}{%
+        \mathopen{}\left(#2\right)\mathclose{}%
+    }{\ifthenelse{#1 = 0}{
+        (#2)%
+    }{\ifthenelse{#1 = 1}{%
+        \big(#2\big)%
+    }{\ifthenelse{#1 = 2}{%
+        \Big(#2\Big)%
+    }{\ifthenelse{#1 = 3}{%
+        \large(#2\large)%
+    }{\ifthenelse{#1 = 4}{%
+        \Large(#2\Large)%
+    }{%
+        \mathopen{}\left(#2\right)\mathclose{}%
+    }}}}}}}
+\newcommand{\Bra}[2][]{
+    \ifthenelse{\isempty{#1}}{%
+        \mathopen{}\left[#2\right]\mathclose{}%
+    }{\ifthenelse{#1 = 0}{
+        [#2]%
+    }{\ifthenelse{#1 = 1}{%
+        \big[#2\big]%
+    }{\ifthenelse{#1 = 2}{%
+        \Big[#2\Big]%
+    }{\ifthenelse{#1 = 3}{%
+        \large[#2\large]%
+    }{\ifthenelse{#1 = 4}{%
+        \Large[#2\Large]%
+    }{%
+        \mathopen{}\left[#2\right]\mathclose{}%
+    }}}}}}}
+
+
+\newcommand{\brackets}[1]{\left[#1\right]}
+
+%%%%%%%%%%%%%%%%%%%
+%    Operators    %
+%%%%%%%%%%%%%%%%%%%
+
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\re}{Re}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Char}{char}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\cof}{cof}
+\DeclareMathOperator{\Ob}{Ob}
+\DeclareMathOperator{\Mor}{Mor}
+\DeclareMathOperator{\rk}{rk}
+
+\newcommand{\concat}{
+  \mathord{
+    \mathchoice
+    {\raisebox{1ex}{\scalebox{.7}{$\frown$}}}
+    {\raisebox{1ex}{\scalebox{.7}{$\frown$}}}
+    {\raisebox{.7ex}{\scalebox{.5}{$\frown$}}}
+    {\raisebox{.7ex}{\scalebox{.5}{$\frown$}}}
+  }
+}
+\newcommand{\restr}[1]{\mathbin\upharpoonright_{#1}}
+\newcommand{\compl}[1]{#1^\mathsf{c}}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\bigabs}[1]{\big\lvert#1\big\rvert}
+\newcommand{\parens}[1]{\left(#1\right)}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+%%%%%%%%%%%%%%%%%%%
+%  Constructions  %
+%%%%%%%%%%%%%%%%%%%
+
+% Arrows
+\newcommand{\xto}[1]{\xrightarrow{#1}}
+
+% Structures
+\newcommand{\verteqsign}{\rotatebox{90}{$\,=$}}
+\newcommand{\verteq}[2]{\underset{\scriptstyle\overset{\mkern4mu\verteqsign}{#2}}{#1}}
+\newcommand{\vertimplies}[2]{\underset{\scriptstyle\overset{\uparrow}{#2}}{#1}}
+\newcommand{\func}[5]{
+    \begin{array}{rccl}
+            #1 : & #2 & \longrightarrow & #3 \\
+                 & #4 & \longmapsto     & #5
+    \end{array}
+}
+\newcommand{\ntimes}[2]{\underbrace{#1, \dots, #1}_{#2 \ttimes}}
+% Reminder: for combinations / binomial coefficients, use \binom{n}{k}
+
+% Set definitions
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\bigset}[1]{\big\{ #1 \big\}}
+\newcommand{\setst}[2]{\left\{ #1 \, \middle| \, #2 \right\}}
+\newcommand{\bigsetst}[2]{\big\{ #1 \, \big| \, #2 \big\}}
+
+\newcommand{\funcset}[2]{{}^{#1}{#2}}
+\newcommand{\angles}[1]{\left\langle #1 \right\rangle}
+\newcommand{\brz}{B_r(z_0)}
+\newcommand\quotient[2]{
+    \mathchoice
+        {% \displaystyle
+            \text{\raise1ex\hbox{$#1$}\Big/\lower1ex\hbox{$#2$}}%
+        }
+        {% \textstyle
+            #1\,/\,#2
+        }
+        {% \scriptstyle
+            #1\,/\,#2
+        }
+        {% \scriptscriptstyle
+            #1\,/\,#2
+        }
+}
+\newcommand{\interior}[1]{\mathring{#1}}
+
+%%%%%%%%%%%%%%%
+%   Letters   %
+%%%%%%%%%%%%%%%
+
+
+% Greek alphabe
+\renewcommand{\phi}{\ensuremath\varphi\xspace}
+\renewcommand{\epsilon}{\ensuremath\varepsilon\xspace}
+\renewcommand{\a}{\ensuremath\alpha\xspace}
+\renewcommand{\d}{\ensuremath{\partial}\xspace}
+\newcommand{\D}{\ensuremath\Delta\xspace}
+\newcommand{\e}{\ensuremath\epsilon\xspace}
+\newcommand{\g}{\ensuremath\gamma\xspace}
+\newcommand{\y}{\g}  % I mistake them every other time
+\newcommand{\p}{\phi\xspace}
+\newcommand{\s}{\sigma\xspace}
+\newcommand{\w}{\ensuremath\omega\xspace}
+
+% Mathbb alphabet
+
+\newcommand{\IB}{\ensuremath{\mathbb B}\xspace}
+\newcommand{\C}{\ensuremath{\mathbb C}\xspace}
+\newcommand{\ID}{\ensuremath{\mathbb D}\xspace}
+\newcommand{\IE}{\ensuremath{\mathbb E}\xspace}
+\newcommand{\F}{\ensuremath{\mathbb F}\xspace}
+\newcommand{\IG}{\ensuremath{\mathbb G}\xspace}
+\newcommand{\N}{\ensuremath{\mathbb N}\xspace}
+\newcommand{\R}{\ensuremath{\mathbb R}\xspace}
+\newcommand{\IP}{\ensuremath{\mathbb P}\xspace}
+\newcommand{\IS}{\ensuremath{\mathbb S}\xspace}
+\newcommand{\IT}{\ensuremath{\mathbb T}\xspace}
+\newcommand{\Q}{\ensuremath{\mathbb Q}\xspace}
+\newcommand{\Z}{\ensuremath{\mathbb Z}\xspace}
+\newcommand{\ONE}{\text{\usefont{U}{bbold}{m}{n}1}}
+
+% Fancy fonts
+\newcommand{\Aa}{\ensuremath{\mathcal A}\xspace}
+\newcommand{\Bb}{\ensuremath{\mathcal B}\xspace}
+\newcommand{\Cc}{\ensuremath{\mathcal C}\xspace}
+\newcommand{\Dd}{\ensuremath{\mathcal D}\xspace}
+\newcommand{\Ee}{\ensuremath{\mathcal E}\xspace}
+\newcommand{\Ff}{\ensuremath{\mathcal F}\xspace}
+\newcommand{\Gg}{\ensuremath{\mathcal G}\xspace}
+\newcommand{\Hh}{\ensuremath{\mathcal H}\xspace}
+\newcommand{\Ii}{\ensuremath{\mathcal I}\xspace}
+\newcommand{\Jj}{\ensuremath{\mathcal J}\xspace}
+\newcommand{\Kk}{\ensuremath{\mathcal K}\xspace}
+\newcommand{\Ll}{\ensuremath{\mathcal L}\xspace}
+\newcommand{\Mm}{\ensuremath{\mathcal M}\xspace}
+\newcommand{\Nn}{\ensuremath{\mathcal N}\xspace}
+\newcommand{\Oo}{\ensuremath{\mathcal O}\xspace}
+\newcommand{\Pp}{\ensuremath{\mathcal P}\xspace}
+\newcommand{\Qq}{\ensuremath{\mathcal Q}\xspace}
+\newcommand{\Rr}{\ensuremath{\mathcal R}\xspace}
+\newcommand{\Ss}{\ensuremath{\mathcal S}\xspace}
+\newcommand{\Tt}{\ensuremath{\mathcal T}\xspace}
+\newcommand{\Uu}{\ensuremath{\mathcal U}\xspace}
+\newcommand{\Vv}{\ensuremath{\mathcal V}\xspace}
+\newcommand{\Ww}{\ensuremath{\mathcal W}\xspace}
+\newcommand{\Xx}{\ensuremath{\mathcal X}\xspace}
+\newcommand{\Yy}{\ensuremath{\mathcal Y}\xspace}
+\newcommand{\Zz}{\ensuremath{\mathcal Z}\xspace}
+\renewcommand{\O}[1]{\mathcal{O}\left(#1\right)}
+
+% Others
+\renewcommand{\emptyset}{\varnothing}
+
+
+%%%%%%%%%%%%%%%%%%
+%   New symbols  %
+%%%%%%%%%%%%%%%%%%
+
+\newcommand{\iddots}{{\cdot^{\cdot^\cdot}}}  % Three dots on the antidiagonal
+\newcommand{\existsinf}{\exists^\infty}
+\newcommand{\coloneq}{\mathrel{\resizebox{\widthof{$\mathord{=}$}}{\height}{ $\!\!\resizebox{1.2\width}{0.8\height}{\raisebox{0.23ex}{$\mathop{:}$}}\!\!=\!\!$ }}}  % Fancier :=
+
+%%%%%%%%%%%%%%%%%%
+%   Shorthands   %
+%%%%%%%%%%%%%%%%%%
+
+% Math text
+\newcommand{\open}{\text{ open }}
+\newcommand{\st}{\text{ \ifenglish{s.t}{t.q}. }}
+\newcommand{\andd}{\text{ \ifenglish{and}{et} }}
+\newcommand{\andquad}{\quad\andd\quad}
+\newcommand{\et}{\text{ et }}
+\newcommand{\ttimes}{\text{ times}}
+\newcommand{\tif}{\text{if }}
+\newcommand{\otherwise}{\text{otherwise}}
+
+% Symbols
+\newcommand{\acts}{\circlearrowright}
+\newcommand{\sub}{\subset}
+\newcommand{\subeq}{\subseteq}
+\renewcommand{\iff}{\ensuremath{\Longleftrightarrow}}
+\newcommand{\iffquad}{\quad\iff\quad}
+\newcommand{\del}{\partial}
+\newcommand{\x}{\times}
+\renewcommand{\emph}{\textbf}
+\newcommand{\Forces}{\vdash}
+
+%%%%%%%%%%%%%%%%%%%%
+% Subject specific %
+%%%%%%%%%%%%%%%%%%%%
+
+% Maybe those should go inside their respesective files
+
+% Graph theory
+\DeclareMathOperator*{\ex}{ex}
+\newcommand{\Turan}{\mathcal{T}}
+
+% Analytic number theory
+\newcommand{\sumdn}{\sum_{d|n}}
+\newcommand{\Li}{\mathrm{Li}}
+
+% Smooth manifolds
+\newcommand{\chart}[1]{(\phi_{#1}, U_{#1})}
+\newcommand{\der}[1]{\frac{\del}{\del #1}}
+
+% Galois Theory
+\newcommand{\clot}[1]{\overline{#1}}
+\newcommand{\Gal}{\mathrm{Gal}}
+% \DeclareMathOperator*{\Gal}{Gal}
+\newcommand{\Kxx}{K[x_1, \dots, x_n]}
+
+% Algebraic topology
+\newcommand{\HCW}{H^{\mathrm{CW}}}
+
+% Complexity
+\newcommand{\coP}{\mathsf{coP}}
+\newcommand{\Ptime}{\mathsf{P}}
+\newcommand{\PHierachy}{\mathsf{PH}}
+\newcommand{\NP}{\mathsf{NP}}
+\newcommand{\coNP}{\mathsf{coNP}}
+\newcommand{\PSPACE}{\mathsf{PSPACE}}
+\newcommand{\NPSPACE}{\mathsf{NPSPACE}}
+
+% Logic
+\newcommand{\Symbol}[1]{\underline{#1}}
+
+% Descriptive Set Theory
+\newcommand{\baire}{\ensuremath{\w^\w}\xspace}
+\newcommand{\cantor}{\ensuremath{2^\w}\xspace}
+\newcommand{\W}{\ensuremath{\w_1}\xspace}  % This is meant to be used only for the first uncountable ordinal
+% Classes
+\newcommand{\bS}[1]{\ensuremath{\mathbf{\Sigma}^0_{#1}}\xspace}
+\newcommand{\bP}[1]{\ensuremath{\mathbf{\Pi}^0_{#1}}\xspace}
+\newcommand{\bD}[1]{\ensuremath{\mathbf{\Delta}^0_{#1}}\xspace}
+\newcommand{\borelsigma}[1]{\ensuremath{\mathbf{\Sigma}^0_{#1}}\xspace}
+\newcommand{\borelpi}[1]{\ensuremath{\mathbf{\Pi}^0_{#1}}\xspace}
+\newcommand{\boreldelta}[1]{\ensuremath{\mathbf{\Delta}^0_{#1}}\xspace}
+\newcommand{\borelGamma}{\ensuremath{\mathbf{\Gamma}}\xspace}
+\newcommand{\LambdaClass}[2]{\ensuremath{\mathbf{\Lambda}_{#1, #2}}\xspace}
+\newcommand{\dualclass}[1]{\check{#1}}
+\newcommand{\nsd}{non-self-dual\xspace}
+\newcommand{\projectivesigma}[1]{\ensuremath{\mathbf{\Sigma}^1_{#1}}\xspace}
+\newcommand{\projectivepi}[1]{\ensuremath{\mathbf{\Pi}^1_{#1}}\xspace}
+\newcommand{\projectivedelta}[1]{\ensuremath{\mathbf{\Delta}^1_{#1}}\xspace}
+% Sets of sequences
+\newcommand{\seqlt}[2]{{#2}^{<#1}}
+\newcommand{\finiteseq}[1]{\seqlt{\w}{#1}}
+% \newcommand{\infseq}[1]{\funcset{\omega}{#1}}
+% \newcommand{\allseq}[1]{\funcset{\leq\omega}{#1}}
+\newcommand{\infseq}[1]{{#1}^\w}
+\newcommand{\allseq}[1]{{#1}^{\leq\omega}}
+\newcommand{\finitebaire}{\ensuremath{\finiteseq{\w}}\xspace}
+\newcommand{\finitecantor}{\ensuremath{\finiteseq{2}}\xspace}
+\newcommand{\length}[1]{\mathrm{lh}(#1)}
+\newcommand{\emptyseq}{\langle\rangle}
+% Operators
+\renewcommand{\succ}[2][]{\ifthenelse{\isempty{#1}}{\mathrm{succ}(#2)}{\mathrm{succ}_{#1}(#2)}}
+\DeclareMathOperator{\odd}{odd}
+\DeclareMathOperator{\even}{even}
+\DeclareMathOperator{\last}{last}
+\newcommand{\Countf}[1]{\#_{#1}}
+\newcommand{\difference}[1]{D_{#1}}
+\newcommand{\suffixes}[2]{{#1}_{(#2)}}
+\newcommand{\wadd}{\oplus}
+\newcommand{\wCountableSup}{\mathrm{sup^\w}}
+\newcommand{\wmult}{\mathop{\otimes}}
+\newcommand{\bigeraser}{\ensuremath{\mathord{\Uparrow}}\xspace}
+\renewcommand{\interleave}{\mathbin{\S}}
+\newcommand{\Init}[1]{\mathrm{Init}_{#1}}
+% Players
+\newcommand{\I}{\texttt{I}\xspace}
+\newcommand{\II}{\texttt{II}\xspace}
+\newcommand{\playerA}{Player \I}
+\newcommand{\playerB}{Player \II}
+
+% \renewcommand{\I}{\texttt{M}\xspace}
+% \renewcommand{\II}{\texttt{B}\xspace}
+% \renewcommand{\playerA}{Michael\xspace}
+% \renewcommand{\playerB}{Bob\xspace}
+% Wadge
+\newcommand{\leW}{\le_\textsc{w}}
+\newcommand{\geW}{\ge_\textsc{w}}
+\newcommand{\gtW}{>_\textsc{w}}
+\newcommand{\ltW}{<_\textsc{w}}
+\newcommand{\equivW}{\equiv_\textsc{w}}
+\newcommand{\Wdegree}[1]{[#1]_{\equivW}}
+% Axioms / Theories
+\newcommand{\ZF}{\textbf{ZF}\xspace}
+\newcommand{\ZFC}{\textbf{ZFC}\xspace}
+\newcommand{\AD}{\textbf{AD}\xspace}
+\renewcommand{\AC}{\textbf{AC}\xspace}
+\newcommand{\DC}{\textbf{DC}\xspace}
+% Games
+\newcommand{\GaleStewart}[1]{\ensuremath{G(#1)}\xspace}
+\newcommand{\BanachMazur}[1]{\ensuremath{BM(#1)}\xspace}
+\newcommand{\Wadge}[2]{\ensuremath{G(#1, #2)}\xspace}
+% Automatons
+\newcommand{\automaton}{automatic set\xspace}
+\newcommand{\automata}{automatic sets\xspace}
+\newcommand{\Automata}{Automatic sets\xspace}
+\newcommand{\Language}{\mathcal{L}}
+\DeclareMathOperator{\Inf}{Inf}
+\newcommand{\AcceptanceCondition}{\mathrm{Acc}}
+\newcommand{\automatonMinus}{\scalebox{0.5}{\begin{tikzpicture}[automata, baseline=-2mm]
+    \node[minus] {};
+\end{tikzpicture}}\xspace}
+\newcommand{\automatonPlus}{\scalebox{0.5}{\begin{tikzpicture}[automata, baseline=-2mm]
+    \node[plus] {};
+\end{tikzpicture}}\xspace}
+\newcommand{\automatonState}[1]{\scalebox{0.5}{\begin{tikzpicture}[automata, baseline=-2mm, minimum size=20]
+    \node[state] {\Large \(#1\)};
+\end{tikzpicture}}\xspace}
+\newcommand{\sumAutomaton}[2]{\begin{tikzpicture}[automata]
+    \path node[initial, state] (root) {$#2$}
+        +(2, 1) node[state] (A) {$#1$}
+        +(2, -1) node[state] (Ac) {$\compl{#1}$};
+    \draw (root) edge (A) edge (Ac);
+\end{tikzpicture}}
+
+
+%%%%%%%%%%%%%%%%%
+%     Tikz      %
+%%%%%%%%%%%%%%%%%
+
+\tikzcdset{row sep/normal=1cm, column sep/normal=1cm}  % So tikz-cd diagram are more squared
+
+% Draws irregular circles.
+\newcommand{\irregularcircle}[2]{  % radius, irregularity
+  let \n1 = {(#1)+rand*(#2)} in
+  +(0:\n1)
+  \foreach \a in {10,20,...,350}{
+    let \n1 = {(#1)+rand*(#2)} in
+    -- +(\a:\n1)
+  } -- cycle
+}
+
+\tikzset{
+triangle/.style={ % To create triangles in trees
+  draw=myRed!90!black,
+  text=black,
+  fill=myRed,
+  shape border uses incircle,
+  isosceles triangle,
+  shape border rotate=90,
+}}
+
+% Used to make arrows on paths. Use like this: \draw[marr=\Singlearrow]
+\tikzset{marr/.style={
+  decoration={
+    markings,
+    mark=at position 0.5 with {#1}
+    },
+  postaction={decorate}
+}}
+\def\Singlearrow{{\arrow[scale=1.5,xshift={0.5pt+2.25\pgflinewidth}]{>}}}
+\def\Doublearrow{{\arrow[scale=1.5,xshift=1.35pt +2.47\pgflinewidth]{>>}}}
+\def\Triplearrow{{\arrow[scale=1.5,xshift=1.75pt +2.47\pgflinewidth]{>>>}}}
+\newcommand{\CWarrow}[3]{ [->] ($1/3*(#1) + 1/3*(#2) + 1/3*(#3)$) ++(220:4pt) arc (220:-40:4pt)}
+\newcommand{\CCWarrow}[3]{ [->] ($1/3*(#1) + 1/3*(#2) + 1/3*(#3)$) ++(-40:4pt) arc (-40:220:4pt)}
+
+% For automatons
+\tikzset{
+    initial text={},
+    do path picture/.style={%
+        path picture={%
+        \pgfpointdiff{\pgfpointanchor{path picture bounding box}{south west}}%
+            {\pgfpointanchor{path picture bounding box}{north east}}%
+        \pgfgetlastxy\x\y%
+        \tikzset{x=\x/2,y=\y/2}%
+        #1
+        }
+    },
+    automata/.style={
+        node distance=60pt,
+        minimum size=20,
+        every edge/.style={
+            draw,
+            ->,
+            auto,
+        }
+    },
+    plus/.style={
+        draw,
+        circle,
+        do path picture={
+            \draw [line cap=round, very thick] (-1/2,0) -- (1/2,0) (0,-1/2) -- (0,1/2);
+        }
+    },
+    minus/.style={
+        draw,
+        circle,
+        do path picture={
+            \draw [line cap=round, very thick] (-1/2,0) -- (1/2,0);
+        }
+    },
+    % Removes extra space on initial nodes
+    % From: https://tex.stackexchange.com/questions/111554/how-to-avoid-superfluous-space-in-the-initial-state-of-a-tikz-automaton#comment245757_111558
+    every initial by arrow/.append style={anchor/.append style={shape=coordinate}},
+    state/.append style={fill=white},
+}
+
+% To put at the bottom right corner of a square that commutes.
+\newcommand{\commutes}{\arrow[ul, phantom, "\scalebox{1.5}{$\circlearrowleft$}"]}
+
+% To link two lines in a long exact sequence.
+% First argument is where the line should connect (ex: dll)
+% Second argument is the label on the line.
+\newcommand{\connecting}[2]{
+    \arrow[#1,phantom, ""{coordinate, name=Z}]
+    \arrow[#1, "#2", rounded corners,
+        to path={
+            -- ([xshift=2ex]\tikztostart.east)
+            |- (Z)[near start]\tikztonodes
+            -| ([xshift=-2ex]\tikztotarget.west)
+            -- (\tikztotarget)
+        }]
+}
+\newcommand{\dotsto}{\mathllap{\cdots\longrightarrow\ }}  % ... → indicate the start of a long sequence without taking space
+\newcommand{\todots}{\mathrlap{\ \longrightarrow\cdots}}  % → ... indicate the end of a long sequence without taking space
+
+\newenvironment{longsequence}{
+    \begin{center}
+        \begin{tikzcd}[row sep=0.5cm]
+}{
+        \end{tikzcd}
+    \end{center}
+}
+
+
+\newcommand{\quickfig}[2]{
+    \begin{wrapfigure}{r}{40mm}
+        \begin{center}
+            #2
+        \end{center}
+        \caption{#1}
+    \end{wrapfigure}
+}
