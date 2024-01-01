@@ -43,6 +43,10 @@ Throughout this document we adopt a set of conventions and notations.
     i.e. $\Yy = \set{0, 1}$ or $\Yy = \set{\text{cat}, \text{dog}, \text{boat}}$.
   \item We use $\Dd$ for datasets. For unlabelled datasets, $\Dd \subset \Xx$.
     For labelled datasets, $\Dd \subset \Xx \times \Yy$.
+  \item Loss functions are denoted by $\Ll$.
+  \item We write $\norm{\cdot}$ for the euclidean norm on $\R^n$,
+    and $\norm{\cdot}_p$ for the $p$-norm on $\R^n$.
+    As a reminder, for $x \in \R^n$, $\norm{x}_\infty = \max_{i=1}^n \abs{x_i}$.
 \end{itemize}
 
 
@@ -55,6 +59,80 @@ The first thing I wanted to do was to verify this in practice. Can I easily
 attack any classifier outside of the well defined confines of a classroom
 or a paper for which a lot of work was put into?
 \todo{Add motivation for why I choose this (philo, impact)}
+
+\subsection{Setup}
+I used three different models and datasets throughout this project.
+The code of every experiment is available at \url{
+  https://github.com/ddorn/autoencoder-attacks
+}.
+
+\paragraph{MNIST}
+The smallest dataset I used is the MNIST dataset \cite{LeCun1998GradientbasedLA},
+with a small convolutional classifier acheiving $99\,\%$ accuracy implemented in pytorch \cite{tuomaso2022trainmnistfast}.0
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{images/sample_MNIST.png}
+  \includegraphics[width=0.45\textwidth]{images/sample_CIFAR10.png}
+  \caption{The first 9 test images of the MNIST dataset (left) and the CIFAR-10 dataset (right)}
+  \label{fig:mnist_cifar10_samples}
+\end{figure}
+
+\paragraph{CIFAR-10}
+The second dataset is the CIFAR-10 dataset \cite{Krizhevsky2009LearningML},
+with a convolutional classifier acheiving $94 \%$ accuracy \cite{999912022cifar10fastsimple}.
+
+\paragraph{ImageNet}
+The third dataset is ImageNet \cite{Deng2009ImageNetAL}, with a ResNet-50 classifier
+achieving $76\,\%$ accuracy \cite{He2015DeepRL}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{images/sample_ImageNet.png}
+  \caption{The first 9 test images of the ImageNet dataset}
+  \label{fig:imagenet_samples}
+\end{figure}
+
+
+\subsection{Fast gradient sign method}
+The simplest attack is the fast gradient sign method (FGSM) \cite{goodfellow2014explaining}.
+This attack requires only one forward and one backward pass through the network
+to find a small perturbation of an image that can (potentially) fool the classifier.
+
+What is small? We usually constrain the norm of the perturbation to
+a small value $\epsilon$. The norm used can be the $l_\infty$ norm,
+for $\epsilon = 10 / 255$ or $\epsilon = 4 / 255$ are common values,
+or the $l_0$, $l_1$ or $l_2$ norm.
+Clearly the four norms produce different constrains, and should be chosen
+depending on the context:
+\begin{itemize}
+  \item $l_\infty$ is a natural choice, and corresponds to changing each
+    pixel value by at most $\epsilon$.
+    % If $\epsilon \leq 4 / 255$, the perturbation is not visible to the human eye.
+  \item Using the $l_0$ norm means to change at most $\epsilon$ pixels. This
+    can be one-pixel attacks \cite{Su2017OnePA},
+    attacks that change a small number of pixels,
+    or patch attacks \cite{Brown2017AdversarialP}.
+  \item $l_1$ and $l_2$ constraints can be used when it is fine if
+    some pixels are completely changed, but not too many are changed
+    a lot.
+\end{itemize}
+
+\begin{definition}
+  Let $f$ be a classifier and $x \in \Xx$ an input.
+  The \emph{fast gradient sign method} is the attack that computes
+  \[
+    %\Adversarial{x}
+    x_{\text{FGSM}}
+      = x + \epsilon \cdot \Sign \Par{\nabla_x \Ll(f(x), y)}
+  \]
+  where $\Ll$ is the loss function used to train $f$,
+  and $\epsilon$ is the desired $l_\infty$ norm of the perturbation.
+\end{definition}
+
+
+
+\subsection{Iterated projected gradient descent}
 
 \section{Attacking autoencoders}
 
