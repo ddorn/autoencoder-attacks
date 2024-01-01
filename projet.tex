@@ -1,4 +1,4 @@
-% \newcommand{\UseWhiteBackground}{1}  % Copy this to have a white document
+\newcommand{\UseWhiteBackground}{1}  % Copy this to have a white document
 \documentclass[]{scrarticle}
 \input{preambule.tex}
 
@@ -17,24 +17,267 @@
 
 % \setcounter{section}{-1}
 \section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+
+Artificial neural networks are famously vulnerable to adversarial attacks
+\cite{szegedy2013intriguing,goodfellow2014explaining,liu2021survey}.
+\todo{Check the papers}
+
+- defense, autoencoders
+
+- universal, transferable attacks
+
 
 \tableofcontents
 
-% \clearpage
-% \section*{Conventions}
+\clearpage
+\section*{Conventions}
+\addcontentsline{toc}{section}{Conventions}
+
+Throughout this document we adopt a set of conventions and notations.
+\begin{itemize}
+  \item We use $A \subset B$ to say $A$ is included, not strictly in $B$
+    and $A \subsetneq B$ if this inclusion is strict.
+  \item $\Xx \subset \R^n$ is the set in which datapoints live.
+  \item $\Yy$ is a space of labels, which will most of the time be categorical,
+    i.e. $\Yy = \set{0, 1}$ or $\Yy = \set{\text{cat}, \text{dog}, \text{boat}}$.
+  \item We use $\Dd$ for datasets. For unlabelled datasets, $\Dd \subset \Xx$.
+    For labelled datasets, $\Dd \subset \Xx \times \Yy$.
+\end{itemize}
 
 
 \clearpage
-\section{Adversarial attacks on neural networks}
-\section{Autoencoders}
-\section{Cat and mouse}
-\todo{Everything}
+
+\section{Attacking classifiers}
+The common knowledge is that neural networks are vulnerable to adversarial attacks
+and adversarial attacks are easy to find \cite{szegedy2013intriguing,goodfellow2014explaining,liu2021survey}.
+The first thing I wanted to do was to verify this in practice. Can I easily
+attack any classifier outside of the well defined confines of a classroom
+or a paper for which a lot of work was put into?
+\todo{Add motivation for why I choose this (philo, impact)}
+
+\section{Attacking autoencoders}
+
+\subsection{Autoencoders}
+
+Autoencoders where introduced by \cite{hinton2006reducing} as a way to learn
+a low dimensional representation of data.
+They are a class of neural networks that are trained to reconstruct their input,
+and are composed of two deep neural network, an encoder and a decoder with a bottleneck in between
+as shown in \autoref{fig:autoencoder}.
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % Encoder, a trapeze
+    \draw[atomictangerine, fill=atomictangerine!20]
+      (0, 0) -- (0, 4) -- (4, 3) -- (4, 1) -- cycle;
+    \node[] at (2, 2) {Encoder};
+    % Bottleneck, vertical text, no shape
+    \node[rotate=-90] at (4.5, 2) {Bottleneck};
+    % Decoder, a trapeze
+    \draw[airforceblue, fill=airforceblue!20]
+      (5, 1) -- (5, 3) -- (9, 4) -- (9, 0) -- cycle;
+    \node[] at (7, 2) {Decoder};
+
+    % Text input on the left, vertical
+    \node[rotate=-90] at (-1, 2) {Input}
+      edge[->, thick] (-0, 2);
+    % Text output on the right, vertical
+    \node[rotate=-90] at (10, 2) {Output}
+      edge[<-, thick] (9, 2);
+  \end{tikzpicture}
+  \caption{Overview of the autoencoder architecture}
+  \label{fig:autoencoder}
+\end{figure}
+
+The \emph{encoder} takes an high dimensional data point as input,
+processes it through a series of layers, usually fully connected layers
+or a residual network \cite{He2015DeepRL} in the case of visual data,
+and outputs a low dimensional representation of the input.
+
+The \emph{decoder} takes the low dimensional output of the encoder and
+processes it similarly through a series of layers,
+and outputs a high dimensional reconstruction of the input.
+
+The \emph{bottleneck} is not a layer, but rather the middle of the autoencoder,
+where the activations are the lowest number of dimensions.
+
+\paragraph{Training}
+Autoencoders are trained to reconstruct their input,
+that is, they learn the identity function. The loss is a natural metric
+on the data space, such as the mean squared error for real valued data.
+
+\begin{definition}
+  The \emph{reconstruction loss} for an autoencoder $f$ on an input $x \in \Xx$
+  is
+  \[
+    \Ll_{\text{recon.}}(x) = \norm{x - f(x)}^2
+  \]
+\end{definition}
+
+To prevent overfitting and to perform a directly useful task,
+an autoencoder can be train to reconstruct a noisy or corrupted
+version of the input.
+\begin{definition}
+  The \emph{denoising loss} for an autoencoder $f$ on an input $x \in \Xx$ is
+  \[
+    \Ll_{\text{denoising}}(x) = \norm{x - f(x + \e)}^2
+  \]
+  where \e is a random vector of the same dimension as $x$, of white noise
+  whose variance is an hyperparmeter of the training setup.
+
+  Note that the denoising loss is stochastic, as it depends on the random
+  vector \e. In practice, we use the compute the loss on one sample of \e
+  per input.
+\end{definition}
+
+\paragraph{Variational autoencoders}
+An specific kind of autoencoders intruduced by \todo{ref intro VAE}
+are variational autoencoders (VAE).
+Technically, they are not very different from regular autoencoders,
+but they come from a different background than data compression.
+Indeed, the hope is that VAEs model the process from which the data was generated.
+Oftentimes, we expect a datapoint (for instance the image of a leaf) to be determined
+only by \textit{a few} variables (for instance, the species of the tree, its age,
+the season, the angle at which the picture was taken etc.).
+We will call $P$, the vector of those few variables that generate the datapoint.
+
+The encoder of a VAE tries to find some representation of $P$ and outputs two vectors,
+$\mu$ and $\sigma$ instead of one, which are interpreted as the mean and the variance
+of the prior on $P$, which is assumed to be a normal distribution.
+
+The variable $P \sim \Nn(\mu, \sigma)$ are then sampled
+and fed to the decoder that tried to reconstruct what should be
+generated from the underlying variables. The decoder thus tries
+to model the process that generated the dataset and outputs
+a distribution $Q$ over the data space.
+
+\begin{definition}
+  Let $f$ be a VAE and $x \in \Xx$ a datapoint.
+  It loss on $x$ is composed of two terms,
+  the \emph{likelyhood loss} and the \emph{regularisation loss}.
+  \[
+    \Ll_{\text{vae}}(x) =
+      \underbrace{\IP(x \mid f(x))}
+        _{\text{likelyhood loss}}
+      + \underbrace{\KLdiv{P}{\Nn(0, 1)}}
+        _{\text{regularisation loss}}
+  \]
+
+\end{definition}
+
+\begin{remark}
+  The KL divergence is a measure of how different two distributions are.
+  In this case, it is used to measure how far the prior on $P$ is from
+  the standard normal distribution.
+  \[
+    \KLdiv{P}{Q} = \int_{\Xx} P(x) \log \frac{P(x)}{Q(x)} \,\dd x
+  \]
+
+  Here we can use the fact that both $P$ and $Q$ are $n$-dimensional normal distributions
+  to compute the KL divergence in closed form.
+  \[
+    \KLdiv{\Nn(\mu, \sigma)}{\Nn(0, 1)}
+    = \frac{-1}{2n} \sum_{i=1}^{n} \Par{
+      1 + \log \sigma_i^2 - \mu_i^2 - \sigma_i^2
+    }
+  \]
+\end{remark}
+
+\todo{Say why KL is used}
+
+\paragraph{$\beta$-VAE}
+
+\subsection{Attacks}
+Autoencoders can be used to prevent adversarial attacks
+against classifier by prepocessing images through the autoencoder.
+The setup is shown in \autoref{fig:ae_defense}.
+
+\begin{figure}[h]
+  \centering
+
+  \begin{tikzpicture}[scale=0.8]
+    \begin{scope}[local bounding box=autoencoder]
+      % Encoder
+      \draw[atomictangerine, fill=atomictangerine!20]
+        (0, 0) -- (0, 4) -- (4, 3) -- (4, 1) -- cycle;
+      \node[] at (2, 2) {Encoder};
+      % Decoder
+      \draw[airforceblue, fill=airforceblue!20]
+        (5, 1) -- (5, 3) -- (9, 4) -- (9, 0) -- cycle;
+      \node[] at (7, 2) {Decoder};
+      \path[->, thick] (4, 2) --
+       node[rotate=-90] {Bottleneck}
+       (5, 2);
+      % \node[rotate=-90, red] (bottleneck) at (4.5, 2) {Bottleneck};
+    \end{scope}
+
+    % Box around the autoencoder, spacing of 0.5 around
+    \draw[thick, rounded corners=0cm]
+      ($(autoencoder.north west) + (-0.5, 0.5)$) rectangle
+      ($(autoencoder.south east) + (0.5, -0.5)$);
+    % Label for the autoencoder
+    \node[anchor=south] at ($(autoencoder.north) + (0, 0.5)$) {Autoencoder};
+
+    % Text input on the left, vertical
+    \node[rotate=-90] at (-1, 2) {Input}
+      edge[->, thick] (autoencoder.west);
+
+    % Classifier
+    \begin{scope}[local bounding box=classifier]
+      \draw[awesome!80, fill=awesome!20] (autoencoder.south east)
+        ++(1, 0) -- ++(0, 4) -- ++(4, -1) -- ++(0, -2) -- cycle;
+      \node[] at (12, 2) {Classifier};
+    \end{scope}
+
+    % Arrow from the autoencoder to the classifier
+    \draw[->, thick] (autoencoder.east) -- ++(1, 0);
+
+    % Text output on the right, vertical
+    \node[rotate=-90] at ($(classifier.east) + (1, 0)$) {Classification}
+      edge[<-, thick] (classifier.east);
+
+  \end{tikzpicture}
+
+  \caption{Autoencoder used as a defense against adversarial attacks}
+  \label{fig:ae_defense}
+\end{figure}
+
+The hope is that an adversarial perturbation of the input
+will not pass through the bottleneck of the autoencoder,
+and thus will not be able to fool the classifier.
+Indeed, the bottleneck is small, and therefore information
+constrained, so we expect to the autoencoder to
+not faithfully reconstruct patterns that it has never seen
+during training. In particular, we expect the latent respresentation
+of an adversarial input to be the same as the representation of
+the original input, and thus the autoencoder should reconstruct the
+original input when fed the adversarial one.
+
+\paragraph{} We can verify this empirically.
+
+% Vary:
+% - autoencoder/task
+% - pairs of inputs
+% Histogram with:
+% - line 1: distance between latent representation of original and adversarial
+% - line 2: distance between random pairs
+% - line 3: distance between random pairs of the same class
+
+\section{Phase transition: ease of attack}
+
+\section{Phase transition: norm detection}
+
 
 \section*{Conclusion}
+\addcontentsline{toc}{section}{Conclusion}
 
+...
 
 \newpage
 \nocite{*}
+\addcontentsline{toc}{section}{References}
 \bibliographystyle{apalike}
 \bibliography{bibliography.bib}
 
