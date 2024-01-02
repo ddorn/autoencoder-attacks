@@ -89,7 +89,7 @@ with a convolutional classifier acheiving $92.8 \%$ accuracy \cite{999912022cifa
 
 \paragraph{ImageNet}
 The third dataset is ImageNet \cite{Deng2009ImageNetAL}, with a ResNet-50 classifier
-achieving $77\,\%$ accuracy \cite{He2015DeepRL}.
+achieving $77\,\%$ top-1 accuracy \cite{He2015DeepRL}.
 
 \begin{figure}[h]
   \centering
@@ -124,6 +124,11 @@ depending on the context:
     a lot.
 \end{itemize}
 
+The fast gradient sign method is an untargeted attack, meaning that
+the goal is to find a perturbation that changes the prediction of the classifier,
+but not to force the classifier to predict a specific label.
+It is defined as follows.
+
 \begin{definition}
   Let $f$ be a classifier and $x \in \Xx$ an input.
   The \emph{fast gradient sign method} is the attack that computes
@@ -136,6 +141,30 @@ depending on the context:
   and $\epsilon$ is the desired $l_\infty$ norm of the perturbation.
 \end{definition}
 
+We show an example of the attack on a randomly sampled image for each of the
+dataset, with the top 5 categories show on the right.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/fgsm_example_CIFAR10.png}
+  \caption{Examples of the FGSM attack on CIFAR10.}
+  \label{fig:fgsm_examples_cifar10}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/fgsm_example_ImageNet.png}
+  \caption{Examples of the FGSM attack on ImageNet.}
+  \label{fig:fgsm_examples_imagenet}
+\end{figure}
+
+
+So I take the three classifiers, a thousand test images from each dataset,
+compute the gradient of the loss with respect to the input image
+and add $\e = 10 / 255$ times the sign of the gradient to the image.
+This gives a thousand adversarial images for each task and
+we can see the accuracy of the clean versus the adversarial images
+in \autoref{fig:fgsm_eps10_agregate}.
 
 \begin{figure}[h]
   \centering
@@ -144,13 +173,47 @@ depending on the context:
     a 1000 test images before and after an FGSM attack with $\epsilon = 10 / 255$.
     The black line corresponds to no change in confidence.
   }
-  \label{fig:fgsm_mnist_cifar10}
+  \label{fig:fgsm_eps10_agregate}
 \end{figure}
 
+We can see that, on agregate, it works very well on ImageNet and CIFAR10,
+and less well on MNIST. This can likely be attributed to the fact that
+images from CIFAR10 and ImageNet are larger than MNIST and with three
+color channels instead of one. The larger size allows for more ways to
+find a path towards the decision boundary.
+The sizes can be found in \autoref{fig:dataset_sizes}.
 
+\begin{figure}[h]
+  \centering
+  \begin{tabular}{l|cccc}
+    & MNIST & CIFAR10 & ImageNet \\ \hline
+    Clean accuracy & $98.8\,\%$ & $92.8\,\%$ & $77.0\,\%$ \\
+    Accuracy $\e = 10/255$ & $98.8\,\%$ & $92.8\,\%$ & $77.0\,\%$ \\
+    Accuracy $\e = 4/255$ & $98.8\,\%$ & $98.8\,\%$ & $98.8\,\%$ \\
+    Image size & $1 \times 28 \times 28$ & $3 \times 32 \times 32$ & $3 \times 256 \times 256$\footnotemark
+  \end{tabular}
+  \caption{Accuracy before and after FGSM attack on a 1000 images.}
+  \label{fig:dataset_sizes}
+\end{figure}
 
+\footnotetext{
+  ImageNet has images of different sizes, but were resized and croped
+  to $256 \times 256$. This is different than the original paper
+  \cite{He2015DeepRL} which used $224 \times 224$ images,
+  but the classifier still acheives good accuracy.
+  This design choice comes from the fact that the autoencoder
+  used in the next section cannot take images smaller than $256 \times 256$.
+}
+
+\todo{Add aversarial accuracy in table}
+\todo{Check that the footnote is on the same page as the figure}
 
 \subsection{Iterated projected gradient descent}
+
+
+\subsection{Universal and transferable attacks}
+
+\subsection{Comparision}
 
 \section{Attacking autoencoders}
 
