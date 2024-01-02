@@ -68,28 +68,34 @@ The code of every experiment is available at \url{
 
 \paragraph{MNIST}
 The smallest dataset I used is the MNIST dataset \cite{LeCun1998GradientbasedLA},
-with a small convolutional classifier acheiving $99\,\%$ accuracy implemented in pytorch \cite{tuomaso2022trainmnistfast}.0
+with a small convolutional classifier acheiving $98.8\,\%$ accuracy implemented in pytorch \cite{tuomaso2022trainmnistfast}.0
+
+\paragraph{CIFAR-10}
+The second dataset is the CIFAR-10 dataset \cite{Krizhevsky2009LearningML},
+with a convolutional classifier acheiving $92.8 \%$ accuracy \cite{999912022cifar10fastsimple}.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.45\textwidth]{images/sample_MNIST.png}
   \includegraphics[width=0.45\textwidth]{images/sample_CIFAR10.png}
-  \caption{The first 9 test images of the MNIST dataset (left) and the CIFAR-10 dataset (right)}
+  \caption{
+    The first 9 test images of
+    the MNIST dataset (left)
+    the CIFAR-10 dataset (right).
+    The confidence of the classifier is shown in parenthesis.}
   \label{fig:mnist_cifar10_samples}
 \end{figure}
 
-\paragraph{CIFAR-10}
-The second dataset is the CIFAR-10 dataset \cite{Krizhevsky2009LearningML},
-with a convolutional classifier acheiving $94 \%$ accuracy \cite{999912022cifar10fastsimple}.
 
 \paragraph{ImageNet}
 The third dataset is ImageNet \cite{Deng2009ImageNetAL}, with a ResNet-50 classifier
-achieving $76\,\%$ accuracy \cite{He2015DeepRL}.
+achieving $77\,\%$ accuracy \cite{He2015DeepRL}.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.45\textwidth]{images/sample_ImageNet.png}
-  \caption{The first 9 test images of the ImageNet dataset}
+  \caption{The first 9 test images of the ImageNet dataset.
+    The confidence of the classifier is shown in parenthesis.}
   \label{fig:imagenet_samples}
 \end{figure}
 
@@ -129,6 +135,18 @@ depending on the context:
   where $\Ll$ is the loss function used to train $f$,
   and $\epsilon$ is the desired $l_\infty$ norm of the perturbation.
 \end{definition}
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/fgsm_strength.png}
+  \caption{Confidence of the three classifiers in the correct label of
+    a 1000 test images before and after an FGSM attack with $\epsilon = 10 / 255$.
+    The black line corresponds to no change in confidence.
+  }
+  \label{fig:fgsm_mnist_cifar10}
+\end{figure}
+
 
 
 
