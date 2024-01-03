@@ -196,7 +196,7 @@ color channels instead of one. The larger size allows for more ways to
 find a path towards the decision boundary.
 The sizes can be found in \autoref{fig:dataset_sizes}.
 
-\begin{figure}[h]
+\begin{table}[h]
   \centering
   \begin{tabular}{l|cccc}
     & MNIST & CIFAR10 & ImageNet \\ \hline
@@ -207,11 +207,11 @@ The sizes can be found in \autoref{fig:dataset_sizes}.
   \end{tabular}
   \caption{Top-1 accuracy before and after FGSM attack on a thousand images.}
   \label{fig:dataset_sizes}
-\end{figure}
+\end{table}
 
 \footnotetext{
   ImageNet has images of different sizes, but were resized and croped
-  to $256 \times 256$. This is different than the original paper
+  to $256 \times 256$. This is different from the original paper
   \cite{He2015DeepRL} which used $224 \times 224$ images,
   but the classifier still acheives good accuracy.
   This design choice comes from the fact that the autoencoder
@@ -376,9 +376,31 @@ a distribution $Q$ over the data space.
 
 \todo{Say why KL is used}
 
-\paragraph{$\beta$-VAE}
+\subsection{Setup}
+% a short section
+I used three different autoencoders, one for each dataset and classifier.
 
-\subsection{Attacks}
+\paragraph{MNIST}
+On the MNIST dataset, I trained a small convolutional autoencoder with a bottleneck of size 3,
+which has reconstructs the images with an average per-pixel error of $???$.
+\todo{add error rate}
+
+\paragraph{CIFAR-10}
+On the CIFAR-10 dataset, I trained a medium convolutional autoencoder with a bottleneck of size ???,
+which has reconstructs the images with an average per-pixel error of $???$.
+\todo{add error rate}
+
+\paragraph{ImageNet}
+On the ImageNet dataset, I used \texttt{stabilityai/sd-vae-ft-mse}, a pretrained autoencoder from StabilityAI
+\cite{stabilityai_sdvaeftmse} with ??? parameters.
+It has a bottleneck of size ??? and reconstructs the images with an average per-pixel error of $???$.
+\todo{add error rate}
+
+
+
+
+
+\subsection{Autoencoders as a defense mechanism}
 Autoencoders can be used to prevent adversarial attacks
 against classifier by prepocessing images through the autoencoder.
 The setup is shown in \autoref{fig:ae_defense}.
@@ -444,8 +466,7 @@ of an adversarial input to be the same as the representation of
 the original input, and thus the autoencoder should reconstruct the
 original input when fed the adversarial one.
 
-\paragraph{} We can verify this empirically.
-
+\todo{Maybe add a plot for distance between latent representations of clean vs adversarial}
 % Vary:
 % - autoencoder/task
 % - pairs of inputs
@@ -454,7 +475,84 @@ original input when fed the adversarial one.
 % - line 2: distance between random pairs
 % - line 3: distance between random pairs of the same class
 
-\section{Phase transition: ease of attack}
+
+
+\paragraph{}
+Passing the adversarial images from \autoref{fig:dataset_sizes},
+through the autoencoder, we can see that the autoencoder
+lessens the visual noise on the images as seen in \autoref{fig:ae_examples}.
+This happens both because the images is compressed then decompressed,
+and because the autoencoders were trained to reconstruct noisy images.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/ae_examples.png}
+  \caption{Examples of the autoencoder defense.}
+  \label{fig:ae_examples}
+\end{figure}
+
+Passing the image through the VAE also recovers most of the accuracy
+of the classifiers, as seen in \autoref{table:ae_examples_accuracy}.
+However, the base accuracy, on clean images is reduced by a few percent
+(about 10\,\% for MNIST and 3\,\% for ImageNet).
+This is an instance of the tradeoff between accuracy and robustness.
+
+\begin{table}[h]
+  \centering
+
+    \begin{tabular}{c|r|cc}
+    & & \multicolumn{2}{c}{Autoencoder} \\
+    & & Without & In front \\
+    \hline
+    \multirow{3}{*}{MNIST}
+    &  Clean accuracy			& 98.9\,\%	& 89.1\,\%	\\
+    &  Accuracy $\epsilon=4/255$	& 98.8\,\%	& 88.9\,\%	\\
+    &  Accuracy $\epsilon=10/255$	& 98.8\,\%	& 89.0\,\%	\\
+    \hline
+    \multirow{3}{*}{ImageNet}
+    &  Clean accuracy			& 77.2\,\%	& 74.7\,\%	\\
+    &  Accuracy $\epsilon=4/255$	& 50.2\,\%	& 72.7\,\%	\\
+    &  Accuracy $\epsilon=10/255$	& 28.2\,\%	& 69.7\,\%	\\
+  \end{tabular}
+
+  \caption{Accuracy of the classifier on the original and autoencoded images.}
+  \label{table:ae_examples_confidence}
+\end{table}
+
+However, this is a very simple baseline defense, which relies on the attacker
+not knowing about the autoencoder, or not having access to it,
+and there are attacks that work even in this case.
+\todo{Add reference to the paper that does this}
+
+More sophisticated defenses can be designed, and many have been proposed.
+One can randomly pick an autoencoder from a pool of autoencoders,
+add noise to the input, take the median of output of many autoencoders,
+or use other compression metrics such as JPEG or reducing the precision of the image.
+
+In any case, even if security through obscurity might work,
+it goes against Kerckhoffs's principle \cite{kerckhoffs1883cryptographie},
+which states that a system should be secure even if the attacker
+knows everything about it, except the secret key.
+There is not a nice concept of a secret key here,
+but considering the autoencoder as a secret key is not a good idea,
+as an autoencoder is too big, with too much information about the world
+to be considered secret.
+
+
+
+
+
+\subsection{Attacking through autoencoders}
+
+\paragraph{Attacking the composition of an MNIST autoencoder and classifier}
+
+\paragraph{Attacking the composition of ImageNet autoencoder and classifier}
+
+\subsection{Attacking the autoencoder}
+\paragraph{Attacking the ImageNet autoencoder to produce a very different image}
+
+
+
 
 \section{Phase transition: norm detection}
 
