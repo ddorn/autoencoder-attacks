@@ -36,6 +36,8 @@
 \usepackage{forest}  % For automatic tikz layout
 \usepackage[framemethod=tikz]{mdframed}  % Frame around theorems
 \usepackage{thmtools}  % Fixes the issue with \autoref and shared counters for thm env. Probably lots of other things also...
+\usepackage{totcount}
+\regtotcounter{figure}  % To count the number of figures, use \total{figure} to print it
 \usepackage{listings}
 % \usepackage{minted}
 \usepackage{pbox}  % A variable width parbox
