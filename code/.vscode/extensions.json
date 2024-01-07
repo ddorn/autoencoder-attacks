@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "ms-toolsai.jupyter",
+        "github.copilot",
+        "ms-python.python",
+        "wakatime.vscode-wakatime",
+        "ms-python.mypy-type-checker"
+    ]
+}

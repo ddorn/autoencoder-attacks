@@ -1,0 +1,5 @@
+.mypy_cache/
+downloads/
+logs/
+data/
+**/__pycache__/**
