@@ -111,8 +111,8 @@ with a convolutional classifier acheiving $92.8 \%$ accuracy \cite{999912022cifa
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.45\textwidth]{images/sample_MNIST.png}
-  \includegraphics[width=0.45\textwidth]{images/sample_CIFAR10.png}
+  \includegraphics[width=0.45\textwidth]{../images/sample_MNIST.png}
+  \includegraphics[width=0.45\textwidth]{../images/sample_CIFAR10.png}
   \caption{
     The first 9 test images of
     the MNIST dataset (left)
@@ -128,7 +128,7 @@ achieving $77\,\%$ top-1 accuracy \cite{He2015DeepRL}.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.45\textwidth]{images/sample_ImageNet.png}
+  \includegraphics[width=0.45\textwidth]{../images/sample_ImageNet.png}
   \caption{The first 9 test images of the ImageNet dataset.
     The confidence of the classifier is shown in parenthesis.}
   \label{fig:imagenet_samples}
@@ -187,21 +187,21 @@ and \autoref{fig:fgsm_examples_imagenet}.
 % A full page for the figure below, without page numbers
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/fgsm_example_MNIST.png}
+  \includegraphics[width=0.9\textwidth]{../images/fgsm_example_MNIST.png}
   \caption{Example of a (non-sucessful) FGSM attack on MNIST.}
   \label{fig:fgsm_examples_mnist}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/fgsm_example_CIFAR10.png}
+  \includegraphics[width=0.9\textwidth]{../images/fgsm_example_CIFAR10.png}
   \caption{Example of a FGSM attack on CIFAR10.}
   \label{fig:fgsm_examples_cifar10}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/fgsm_example_ImageNet.png}
+  \includegraphics[width=0.9\textwidth]{../images/fgsm_example_ImageNet.png}
   \caption{Example of a FGSM attack on ImageNet.}
   \label{fig:fgsm_examples_imagenet}
 \end{figure}
@@ -219,7 +219,7 @@ in \autoref{fig:fgsm_eps10_agregate}.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/fgsm_strength.png}
+  \includegraphics[width=0.9\textwidth]{../images/fgsm_strength.png}
   \caption{Confidence of the three classifiers in the correct label of
     a 1000 test images before and after an FGSM attack with $\epsilon = 10 / 255$.
     The black line corresponds to no change in confidence.
@@ -587,7 +587,7 @@ and because the autoencoders were trained to reconstruct noisy images.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/ae_examples.png}
+  \includegraphics[width=0.9\textwidth]{../images/ae_examples.png}
   \caption{
     Examples of the autoencoder defense.
     \emph{Left}: first 2 images of each dataset.
@@ -689,7 +689,7 @@ There are two natural attacks to try:
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/ae_attack_examples.png}
+  \includegraphics[width=0.9\textwidth]{../images/ae_attack_examples.png}
   \caption{
     Examples of attacks through the autoencoder.
   }
@@ -731,7 +731,7 @@ does hold.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/ae_many_attack_examples.png}
+  \includegraphics[width=0.9\textwidth]{../images/ae_many_attack_examples.png}
   \caption{
     Examples of iterated FGSM attacks through the autoencoder and classifier.
     \emph{Even columns:} Adversarial images.
@@ -759,7 +759,7 @@ and image that is completely different from the input.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/ae_targeted_attack_example.png}
+  \includegraphics[width=0.6\textwidth]{../images/ae_targeted_attack_example.png}
   \caption{
     Example of a targeted attack that producing a different image
     through the autoencoder.
@@ -796,7 +796,7 @@ This was not an easy task, but is possible with a few tricks and caveats:
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/ae_many_targeted_attack_examples_ImageNet.png}
+  \includegraphics[width=0.9\textwidth]{../images/ae_many_targeted_attack_examples_ImageNet.png}
   \caption{
     Examples of attacks through the autoencoder.
     \emph{Even columns:} Adversarial images.
@@ -854,7 +854,7 @@ where the perturbation is amplified?
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/ae_attack_distances.png}
+  \includegraphics[width=0.6\textwidth]{../images/ae_attack_distances.png}
   \caption{
     Distance in activation space between the original image and the adversarial image
     at each layer of the autoencoder, for the 12 attacks from
@@ -871,7 +871,7 @@ but the size of those tensors also reach 16 million elements.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/ae_attack_distances_normalized.png}
+  \includegraphics[width=0.8\textwidth]{../images/ae_attack_distances_normalized.png}
   \caption{
     Distance in activation space between the original image and the adversarial image
     at each layer of the autoencoder, for the 12 attacks from
@@ -893,7 +893,7 @@ Or is it because the activations are in different directions?
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/ae_activation_norm.png}
+  \includegraphics[width=0.9\textwidth]{../images/ae_activation_norm.png}
   \caption{
     Layer-by-layer plot of the norm of the activations of the autoencoder,
     normalised by the average norm of 100 images from the dataset.
@@ -937,7 +937,7 @@ to StabilityAI's autoencoder, or to larger autoencoders.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/ae_activation_norm_MNIST.png}
+  \includegraphics[width=0.9\textwidth]{../images/ae_activation_norm_MNIST.png}
   \caption{
     Layer-by-layer plot of the norm of the activations of the autoencoder,
     normalised by the average norm of 100 images from the dataset.
@@ -958,7 +958,7 @@ passed through the autoencoder.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/bird-no-bird.png}
+  \includegraphics[width=0.8\textwidth]{../images/bird-no-bird.png}
   \caption{
     A bird with an invisibility cloak.
     It is easier to attack when only a part of the image is changed,
@@ -976,7 +976,7 @@ only the best of magicians have been able to do.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/bird-resurected.png}
+  \includegraphics[width=0.8\textwidth]{../images/bird-resurected.png}
   \caption{
     A bird appearing out of thin air.
   }

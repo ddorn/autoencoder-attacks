@@ -4,12 +4,12 @@ figures:
 
 # Build the latex document automatically for instant preview and sync with the source in vim
 auto:
-	latexmk -pdf -silent -pdflatex="pdflatex -interaction=nonstopmode" -output-directory=out -pvc projet.tex
+	cd tex && latexmk -pdf -silent -pdflatex="pdflatex -interaction=nonstopmode" -output-directory=out -pvc main.tex
 
 # Build the latex document
 build:
-	latexmk -pdf -silent -pdflatex="pdflatex -interaction=nonstopmode" -output-directory=out projet.tex
+	cd tex && latexmk -pdf -silent -pdflatex="pdflatex -interaction=nonstopmode" -output-directory=out main.tex
 
 # Clean the latex build files
 clean:
-	latexmk -c -output-directory=out
+	cd tex && latexmk -c -output-directory=out
