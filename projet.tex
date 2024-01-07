@@ -5,14 +5,14 @@
 \title{Between decideable logics: $\mathbf{\omega}$-automata and infinite games}
 \author{Diego Dorn}
 
-% \renewcommand{\todo}[1]{}
+\renewcommand{\todo}[1]{}
 
 \begin{document}
 
 \input{first_page.tex}
 
-\listoftodos[Remaining to be done]
-\newpage
+% \listoftodos[Remaining to be done]
+% \newpage
 
 
 % \setcounter{section}{-1}
@@ -76,13 +76,9 @@ autoencoders when under an attack to transform their input.
 
 Throughout this document we adopt a set of conventions and notations.
 \begin{itemize}
-  \item We use $A \subset B$ to say $A$ is included, not strictly in $B$
-    and $A \subsetneq B$ if this inclusion is strict.
   \item $\Xx \subset \R^n$ is the set in which datapoints live.
   \item $\Yy$ is a space of labels, which will most of the time be categorical,
     i.e. $\Yy = \set{0, 1}$ or $\Yy = \set{\text{cat}, \text{dog}, \text{boat}}$.
-  \item We use $\Dd$ for datasets. For unlabelled datasets, $\Dd \subset \Xx$.
-    For labelled datasets, $\Dd \subset \Xx \times \Yy$.
   \item Loss functions are denoted by $\Ll$.
   \item We write $\norm{\cdot}$ for the euclidean norm on $\R^n$,
     and $\norm{\cdot}_p$ for the $p$-norm on $\R^n$.
@@ -192,21 +188,21 @@ and \autoref{fig:fgsm_examples_imagenet}.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{images/fgsm_example_MNIST.png}
-  \caption{Examples of the FGSM attack.}
+  \caption{Example of a (non-sucessful) FGSM attack on MNIST.}
   \label{fig:fgsm_examples_mnist}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{images/fgsm_example_CIFAR10.png}
-  \caption{Examples of the FGSM attack.}
+  \caption{Example of a FGSM attack on CIFAR10.}
   \label{fig:fgsm_examples_cifar10}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{images/fgsm_example_ImageNet.png}
-  \caption{Examples of the FGSM attack.}
+  \caption{Example of a FGSM attack on ImageNet.}
   \label{fig:fgsm_examples_imagenet}
 \end{figure}
 
@@ -303,30 +299,44 @@ is necessary to iterate on the attack multiple times.
 % and add it to the image.
 
 
+\paragraph{Transferable attacks}
+The fast gradient sign method is a white box attack,
+meaning that it requires access to the weights of the model
+to perform the attack. In practice, a lot of models are proprietary,
+or at least not easily accessible, but this does not mean that
+they are safe from adversarial attacks.
 
-\subsection{Universal and transferable attacks}
+Indeed, it is possible to create attacks that are transferable
+to other models, meaning that the adversarial images produced
+by the attack on one model are also adversarial images for another model.
+This can be used for instance to attack a large model, with
+only access to a smaller model.
+Attacks on vision models tend to be transferable by default,
+and can even transfer, in a weak sense, to humans \cite{Elsayed2018AdversarialET}.
 
-\subsection{Comparision}
-
-
-\paragraph{Conclusion}
-
-Competition \cite{Kurakin2018AdversarialAA}
-
-
-
-
-
-
-
+However, stronger transferable attacks can be found by
+attacking multiple models at once, that is, by using
+the mean of the loss of multiple models instead of the loss of one model.
+While this was the topic I initially started to work on,
+it will not be the focus of the rest of this report.
 
 
-\newpage
+% Competition \cite{Kurakin2018AdversarialAA}
+
+
+
+
+
+
+
+
+
+\clearpage
 
 \section{Attacking autoencoders}
 
-Autoencoders have been suggested as a defense mechanism against adversarial attacks
-\cite{guo2017countering,liu2017enhanced,liu2018feature}.
+Autoencoders have been suggested as a defense mechanism against adversarial attacks.
+\todo{add citation}
 
 \subsection{Autoencoders}
 
@@ -402,9 +412,11 @@ version of the input.
   per input.
 \end{definition}
 
-\paragraph{Variational autoencoders (VAE)}
-A specific kind of autoencoders intruduced by \cite{Kingma2013AutoEncodingVB}
-are variational autoencoders.
+\paragraph{Variational AutoEncoders (VAE)}
+A specific kind of autoencoders, and the one that will be
+used in all of the following experiments,
+are variational autoencoders,
+intruduced by \cite{Kingma2013AutoEncodingVB}
 Technically, they are not very different from regular autoencoders,
 but they come from a different background than data compression.
 Indeed, the hope is that VAEs model the process from which the data was generated.
@@ -464,24 +476,27 @@ corresponds to the assumtion that the underlying variables
 are normally distributed.
 
 \subsection{Setup}
-I used three different autoencoders, one for each dataset and classifier.
+I used two different variational autoencoders, one for each dataset and classifier.
+
 
 \paragraph{MNIST}
-On the MNIST dataset, I trained a small convolutional autoencoder with a bottleneck of size 3,
+On the MNIST dataset, I trained a small convolutional autoencoder with a bottleneck of size 4,
 which has reconstructs the images with an average per-pixel error of $7.3\,\%$.
-\todo{Use bottleneck of size 5 instead}
+\todo{Show architecture}
 
-\paragraph{CIFAR-10}
-On the CIFAR-10 dataset, I trained a medium convolutional autoencoder with a bottleneck of size ???,
-which has reconstructs the images with an average per-pixel error of $???$.
-\todo{add error rate}
+% \paragraph{CIFAR-10}
+% On the CIFAR-10 dataset, I trained a medium convolutional autoencoder with a bottleneck of size ???,
+% which has reconstructs the images with an average per-pixel error of $???$.
+% \todo{add error rate}
 
 \paragraph{ImageNet}
 On the ImageNet dataset, I used \texttt{stabilityai/sd-vae-ft-mse}, a pretrained autoencoder from StabilityAI
-\cite{stabilityai_sdvaeftmse} with ??? parameters.
-It has a bottleneck of size ??? and reconstructs the images with an average per-pixel error of $3.3\,\%$.
-\todo{add error rate}
+\cite{stabilityai_sdvaeftmse} with $83.8\text{M}$ parameters.
+It has a bottleneck of size 2048 and reconstructs the images with an average per-pixel error of $3.3\,\%$.
 
+
+\paragraph{}5Note: In the following, every use the term \textit{autoencoder}
+refers to a variational autoencoder.
 
 
 
@@ -619,7 +634,9 @@ and there are attacks that work even in this case.
 More sophisticated defenses can be designed, and many have been proposed.
 One can randomly pick an autoencoder from a pool of autoencoders,
 add noise to the input, take the median of output of many autoencoders,
-or use other compression metrics such as JPEG or reducing the precision of the image.
+or use other compression metrics such as JPEG \cite{Shin2017JPEGresistantAI}
+or reducing the precision of the image.
+\todo{Add reference to the paper that does this}
 
 In any case, even if security through obscurity might work,
 it goes against Kerckhoffs's principle \cite{kerckhoffs1883cryptographie},
@@ -659,7 +676,6 @@ There are two natural attacks to try:
     The attack can also be untargeted, in which case the target label $y$
     is chosen to be the label of the original image $x$ and we search
     for the maximum of the cross entropy loss instead of the minimum.
-    \todo{Intro cross entropy loss qqpart}
   \item Attacking the autoencoder directly to produce a different image.
     In this case, the loss function is the reconstruction loss of the autoencoder,
     hover
@@ -695,7 +711,7 @@ adversarial images are very different on the two datasets:
 Therefore, both kinds of attacks mechanisms are possible. It is possible to transform an image through an autoencoder
 into something that a human would recognise as different
 (or at least for this specific small VAE on MNIST), but it is also possible
-to make an autoencoder produce and adversarial image.
+to make an autoencoder produce an adversarial image.
 
 The attacks being different for the two datasets suggests that
 transforming an image is easier on small networks or images
@@ -705,13 +721,13 @@ Before verifying this hypothesis,
 \todo{verify this hypothesis}
 we need to check if this pattern holds for other autoencoders.
 
-\paragraph{}
 Taking 20 random images from the test set of each dataset,
 we can see in \autoref{fig:ae_attack_examples_many} that the pattern
-does hold. However, note that we filtered out the images for which
-the attack did not succeed in fooling the classifier, which is about
-$??? \%$ of the images for MNIST and $??? \%$ for ImageNet.
-\todo{Compute attack success rate}
+does hold.
+% However, note that we filtered out the images for which
+% the attack did not succeed in fooling the classifier, which is about
+% $??? \%$ of the images for MNIST and $??? \%$ for ImageNet.
+% \todo{Compute attack success rate}
 
 \begin{figure}[h]
   \centering
@@ -738,18 +754,20 @@ the loss components or using attacks methods not mentions in this report.
 The other question left is whether the ImageNet autoencoder can produce
 and image that is completely different from the input.
 
+% \clearpage
 \subsection{Attacking the ImageNet autoencoder}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.6\textwidth]{images/ae_targeted_attack_example.png}
   \caption{
-    Examples of an attack targeted at producing a different image
+    Example of a targeted attack that producing a different image
     through the autoencoder.
+    The output image is almost correctly classified by the ResNet50,
+    with 41\,\% "strainer" and "10\,\% "Petri dish" (the correct one).
   }
   \label{fig:ae_targeted_attack_example}
 \end{figure}
-\todo{Add more vertical space between images}
 
 I set out to attack the ImageNet autoencoder
 so that it produces an image that is completely different from the input.
@@ -778,9 +796,11 @@ This was not an easy task, but is possible with a few tricks and caveats:
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/ae_many_targeted_attack_examples.png}
+  \includegraphics[width=0.9\textwidth]{images/ae_many_targeted_attack_examples_ImageNet.png}
   \caption{
     Examples of attacks through the autoencoder.
+    \emph{Even columns:} Adversarial images.
+    \emph{Odd columns:} The image on the left passed through the autoencoder.
   }
   \label{fig:ae_targeted_attack_example2}
 \end{figure}
@@ -806,7 +826,6 @@ produced with 3 steps with different hyperparmeters:
     200 & $70 / 255$ & $1.0$ & $0.0004$ \\
   \end{tabular}
 \end{center}
-\todo{Fact check the hyperparmeters}
 
 
 \begin{remark}
@@ -816,6 +835,7 @@ produced with 3 steps with different hyperparmeters:
   an autoencoder as a defense mechanism.
 \end{remark}
 
+\clearpage
 \section{Norm detection}
 
 Seeing the attacks that produce a completely different image
@@ -903,10 +923,17 @@ The last question is whether this phenomenon is specific to
 our setup, or is a more general phenomenon.
 
 \paragraph{Different autoencoders}
-I tried the same experiment on the other autoencoders
-on MNIST, whose results are shown in
+I tried the same experiment on the MNIST autoencoder
+whose results are shown in
 \autoref{fig:ae_activation_norm_mnist}
 but could not get a good autoencoder running on CIFAR10.
+On MNIST, there is no clear spike, and the norms of adversarial
+activations are even a little bit smaller than the norms of clean activations.
+However, this is an artifact of the choice of the attacks to plot,
+and other attacks did not show this pattern.
+
+Overall, this suggests that the phenomenon is either specific
+to StabilityAI's autoencoder, or to larger autoencoders.
 
 \begin{figure}[h]
   \centering
@@ -919,22 +946,53 @@ but could not get a good autoencoder running on CIFAR10.
 \end{figure}
 
 
+Similarly, attacking only the classifier, without the autoencoder,
+does not produce this pattern.
+
+\clearpage
+\section*{Bonus}
+\addcontentsline{toc}{section}{Bonus}
+
+As a bonus, we show a few images that produce interesting results when
+passed through the autoencoder.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/bird-no-bird.png}
+  \caption{
+    A bird with an invisibility cloak.
+    It is easier to attack when only a part of the image is changed,
+    as the two are more similar.
+  }
+\end{figure}
+
+Note that making birds disapear is something humans have been really good at,
+without the help of neural networks.
+60\% of european land birds have disappeared between 1980 and 2016
+\cite{Rigal2023FarmlandPA}, for a total of 800 million birds.
+
+However, making a bird appear out of thin air is something that
+only the best of magicians have been able to do.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/bird-resurected.png}
+  \caption{
+    A bird appearing out of thin air.
+  }
+\end{figure}
 
 
-\paragraph{Different attacks}
 
 
 
+% \section*{Conclusion}
+% \addcontentsline{toc}{section}{Conclusion}
 
 
-\section*{Conclusion}
-\addcontentsline{toc}{section}{Conclusion}
-
-...
-
-\newpage
+\clearpage
 % \nocite{*}
-\addcontentsline{toc}{section}{References}
+\addcontentsline{toc}{section}{Bibliography}
 \bibliographystyle{apalike}
 \bibliography{bibliography.bib}
 
