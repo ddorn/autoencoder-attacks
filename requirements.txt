@@ -1,0 +1,14 @@
+datasets
+einops
+imageio
+matplotlib
+numpy
+Pillow
+plotly
+sklearn
+sympy
+torch
+torchinfo
+torchvision
+tqdm
+kaleido

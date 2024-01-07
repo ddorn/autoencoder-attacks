@@ -887,7 +887,18 @@ This spike is present in every of the 12 attacks.
 And corresponds to the output of the attention, before normalisation
 and before the last three convolutions of the encoder.
 
-I first tried to understand why the distance between the clean
+If an important part of the attack
+happens in the (only) attention module of the network,
+it might explain why some of the attack visuals
+appear ``blocky'': each block corresponds to a token
+in the attention mechanism.
+
+It is however hard to say whether most of the attack happens
+in this layer or if it just the only one with such artifact.
+Indeed techniques such as activation patching \cite{Zhang2023TowardsBP}
+cannot be applied as there is not residual stream in the autoencoder.
+
+Therefore, I first tried to understand why the distance between the clean
 and corrupt activations was so high, do they have a different norm?
 Or is it because the activations are in different directions?
 

@@ -1,0 +1,54 @@
+apiVersion: run.ai/v1
+kind: RunaiJob
+metadata:
+  name: testjob # 🅰️ MUST BE SAME NAME of the "release" label under spec>templace>label bellow in order to get logs into the Run:AI dashboard
+  labels:
+    # 🕺 Remove the line below for train job.
+    priorityClassName: "build"
+    user: dorn
+spec:
+  template:
+    metadata:
+      labels:
+        user: dorn
+        release: testjob # 🅰️ MUST BE SAME NAME of your pod "name" specify in the metadata above in order to get logs into the Run:AI dashboard
+    spec:
+      schedulerName: runai-scheduler
+      restartPolicy: Never
+      securityContext:
+        # In order to access your PVC though NFS protocol, you must run your container with the correct UID/GID
+        # If you run you container as root, you won't be able to read or write to you persistent volune (PVC)
+        runAsUser: 30217  # insert uid as found in people.epfl in admistrative data
+        runAsGroup: 10776 # insert gid as found in people.epfl in admistrative data
+        fsGroup: 10776    # insert gid as found in people.epfl in admistrative data
+      containers:
+      - name: container-name
+        # 👉 path of the docker image to run
+        image: registry.rcp.epfl.ch/diego/python:latest
+        # image: pytorch/pytorch:latest
+        imagePullPolicy: Always
+
+        workingDir : /home/diego # path to a temporary local folder in your container with rw access (not persistent)
+        command: ["/bin/zsh"]
+        args:
+        - "-c"
+        - "df -H && sleep 4h"
+        # env:
+          # General Environment Variable that can be declared and used inside the container by your code
+          # - name: HOME
+          #   value: "/PATH/TO/HOMEDIR"
+          # - name: PYTHONPATH
+          #   value: "/PATH/TO/PYLIB1:/PATH/TO/PYLIB2:/PATH/TO/PYLIB3"
+        resources:
+          limits:
+            # 👉 number of GPU to use
+            nvidia.com/gpu: 0.5
+        volumeMounts:
+          - mountPath: /scratch
+            name: csft-scratch #Reference to the volume name declared below under "Volumes" section
+      volumes:
+        # multiple Persistent Volume Claim (PVC) can be declare in this section
+        # to list all pvc you have access, run "kubectl get pvc"
+        - name: csft-scratch # NAME of the volume that is used in the volumeMounts section aboce
+          persistentVolumeClaim:
+            claimName: runai-csft-dorn-scratch # Name of the PVC you can get
