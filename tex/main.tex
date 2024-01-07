@@ -2,7 +2,7 @@
 \documentclass[]{scrarticle}
 \input{preambule.tex}
 
-\title{Between decideable logics: $\mathbf{\omega}$-automata and infinite games}
+\title{Adversarial Attacks on Autoencoders}
 \author{Diego Dorn}
 
 \renewcommand{\todo}[1]{}
@@ -20,14 +20,14 @@
 \addcontentsline{toc}{section}{Introduction}
 
 Machine learning models take more and more importance in our society.
-From recommenders systems of social media and search engines,
+From recommender systems of social media and search engines,
 to automated screening of job and loan applications,
 from power grid management
-to general purpose generative models,
+to general-purpose generative models,
 we seem to be going towards a world where more and more decisions
 are automated.
 
-However, if we want the mass depolyment of those systems
+However, if we want the mass deployment of those systems
 to not be accompanied by more than normal accidents,
 we still need to understand better how those systems work,
 and especially how they fail.\footnote{
@@ -48,14 +48,14 @@ on the visual components of multimodal large language models,
 however, we switched to attacking image autoencoders.
 Autoencoders are a class of neural networks that are trained
 to compress and reconstruct their input, and can be used
-as a defense mechanism against some adversarial attacks.
+as a defence mechanism against some adversarial attacks.
 
-The project is divided in three parts. In the first part,
+The project is divided into three parts. In the first part,
 we show different adversarial attacks on classifiers,
 before applying them to autoencoders in the second part,
 where we show that autoencoders can completely
-transform their input into an other image.
-Finally, in the third part, we show that present
+transform their input into another image.
+Finally, in the third part, we present
 a novel finding on the norm of activations of
 autoencoders when under an attack to transform their input.
 
@@ -74,7 +74,7 @@ autoencoders when under an attack to transform their input.
 \section*{Conventions}
 \addcontentsline{toc}{section}{Conventions}
 
-Throughout this document we adopt a set of conventions and notations.
+Throughout this document, we adopt a set of conventions and notations.
 \begin{itemize}
   \item $\Xx \subset \R^n$ is the set in which datapoints live.
   \item $\Yy$ is a space of labels, which will most of the time be categorical,
@@ -92,7 +92,7 @@ Throughout this document we adopt a set of conventions and notations.
 The common knowledge is that neural networks are vulnerable to adversarial attacks
 and adversarial attacks are easy to find \cite{szegedy2013intriguing,goodfellow2014explaining,liu2021survey}.
 The first thing I wanted to do was to verify this in practice. Can I easily
-attack any classifier outside of the well defined confines of a classroom
+attack any classifier outside of the well-defined confines of a classroom
 or a paper for which a lot of work was put into?
 
 \subsection{Setup}
@@ -103,7 +103,7 @@ The code of every experiment is available at \url{
 
 \paragraph{MNIST}
 The smallest dataset I used is the MNIST dataset \cite{LeCun1998GradientbasedLA},
-with a small convolutional classifier acheiving $98.8\,\%$ accuracy implemented in pytorch \cite{tuomaso2022trainmnistfast}.0
+with a small convolutional classifier achieving $98.8\,\%$ accuracy implemented in pytorch \cite{tuomaso2022trainmnistfast}.0
 
 \paragraph{CIFAR-10}
 The second dataset is the CIFAR-10 dataset \cite{Krizhevsky2009LearningML},
@@ -117,7 +117,7 @@ with a convolutional classifier acheiving $92.8 \%$ accuracy \cite{999912022cifa
     The first 9 test images of
     the MNIST dataset (left)
     the CIFAR-10 dataset (right).
-    The confidence of the classifier is shown in parenthesis.}
+    The confidence of the classifier is shown in parentheses.}
   \label{fig:mnist_cifar10_samples}
 \end{figure}
 
@@ -130,14 +130,14 @@ achieving $77\,\%$ top-1 accuracy \cite{He2015DeepRL}.
   \centering
   \includegraphics[width=0.45\textwidth]{../images/sample_ImageNet.png}
   \caption{The first 9 test images of the ImageNet dataset.
-    The confidence of the classifier is shown in parenthesis.}
+    The confidence of the classifier is shown in parentheses.}
   \label{fig:imagenet_samples}
 \end{figure}
 
 
 \subsection{Fast gradient sign method}
 The simplest attack is the fast gradient sign method (FGSM) \cite{goodfellow2014explaining}.
-FGSM works by linearizing the loss function around the input, and
+FGSM works by linearizing the loss function around the input and
 computing the exact maximum of the linearized loss function.
 
 This attack requires only one forward and one backward pass through the network
@@ -147,10 +147,10 @@ What is small? We usually constrain the norm of the perturbation to
 a small value $\epsilon$. The norm used can be the $l_\infty$ norm,
 for $\epsilon = 10 / 255$ or $\epsilon = 4 / 255$ are common values,
 or the $l_0$, $l_1$ or $l_2$ norm.
-Clearly the four norms produce different constrains, and should be chosen
+Clearly, the four norms produce different constraints and should be chosen
 depending on the context:
 \begin{itemize}
-  \item $l_\infty$ is a natural choice, and corresponds to changing each
+  \item $l_\infty$ is a natural choice and corresponds to changing each
     pixel value by at most $\epsilon$.
     % If $\epsilon \leq 4 / 255$, the perturbation is not visible to the human eye.
   \item Using the $l_0$ norm means to change at most $\epsilon$ pixels. This
@@ -188,27 +188,27 @@ and \autoref{fig:fgsm_examples_imagenet}.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{../images/fgsm_example_MNIST.png}
-  \caption{Example of a (non-sucessful) FGSM attack on MNIST.}
+  \caption{Example of a (non-successful) FGSM attack on MNIST.}
   \label{fig:fgsm_examples_mnist}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{../images/fgsm_example_CIFAR10.png}
-  \caption{Example of a FGSM attack on CIFAR10.}
+  \caption{Example of an FGSM attack on CIFAR10.}
   \label{fig:fgsm_examples_cifar10}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{../images/fgsm_example_ImageNet.png}
-  \caption{Example of a FGSM attack on ImageNet.}
+  \caption{Example of an FGSM attack on ImageNet.}
   \label{fig:fgsm_examples_imagenet}
 \end{figure}
 
 The attack seems to not work for the image from MNIST, but works well
 on the one from CIFAR10 and ImageNet.
-Is it the case for all images?
+Is this the case for all images?
 
 So I take the three classifiers, a thousand test images from each dataset,
 compute the gradient of the loss with respect to the input image
@@ -227,10 +227,10 @@ in \autoref{fig:fgsm_eps10_agregate}.
   \label{fig:fgsm_eps10_agregate}
 \end{figure}
 
-We can see that, on agregate, it works very well on ImageNet and CIFAR10,
+We can see that, on aggregate, it works very well on ImageNet and CIFAR10,
 and less well on MNIST. This can likely be attributed to the fact that
 images from CIFAR10 and ImageNet are larger than MNIST and with three
-color channels instead of one. The larger size allows for more ways to
+colour channels instead of one. The larger size allows for more ways to
 find a path towards the decision boundary.
 The sizes can be found in \autoref{table:dataset_sizes}.
 
@@ -248,10 +248,10 @@ The sizes can be found in \autoref{table:dataset_sizes}.
 \end{table}
 
 \footnotetext{
-  ImageNet has images of different sizes, but were resized and croped
+  ImageNet has images of different sizes, but were resized and cropped
   to $256 \times 256$. This is different from the original paper
   \cite{He2015DeepRL} which used $224 \times 224$ images,
-  but the classifier still acheives good accuracy.
+  but the classifier still achieves good accuracy.
   This design choice comes from the fact that the autoencoder
   used in the next section cannot take images smaller than $256 \times 256$.
 }
@@ -286,11 +286,11 @@ to decrease. Before, we wanted the loss, evaluated with the correct label
 to increase.
 
 \paragraph{Iterative fast gradient sign method}
-Instead adding \e times the sign of the gradient, we can iterate
+Instead of adding \e times the sign of the gradient, we can iterate
 $N$ times and add $\e / N$ times the sign of the gradient at each step.
 This is called the iterative fast gradient sign method.
 In our experiments, this managed to find adversarial images with
-smaller perturbations, and for harder attacks targets it
+smaller perturbations, and for harder attack targets it
 is necessary to iterate on the attack multiple times.
 
 % \paragraph{Iterative gradient ascent}
@@ -335,15 +335,15 @@ it will not be the focus of the rest of this report.
 
 \section{Attacking autoencoders}
 
-Autoencoders have been suggested as a defense mechanism against adversarial attacks.
+Autoencoders have been suggested as a defence mechanism against adversarial attacks.
 \todo{add citation}
 
 \subsection{Autoencoders}
 
-Autoencoders where introduced by \cite{hinton2006reducing} as a way to learn
-a low dimensional representation of data.
+Autoencoders were introduced by \cite{hinton2006reducing} as a way to learn
+a low-dimensional representation of data.
 They are a class of neural networks that are trained to reconstruct their input,
-and are composed of two deep neural network, an encoder and a decoder with a bottleneck in between
+and are composed of two deep neural networks, an encoder and a decoder with a bottleneck in between
 as shown in \autoref{fig:autoencoder}.
 
 \begin{figure}[h]
@@ -371,14 +371,14 @@ as shown in \autoref{fig:autoencoder}.
   \label{fig:autoencoder}
 \end{figure}
 
-The \emph{encoder} takes an high dimensional data point as input,
+The \emph{encoder} takes a high dimensional data point as input,
 processes it through a series of layers, usually fully connected layers
 or a residual network \cite{He2015DeepRL} in the case of visual data,
-and outputs a low dimensional representation of the input.
+and outputs a low-dimensional representation of the input.
 
 The \emph{decoder} takes the low dimensional output of the encoder and
 processes it similarly through a series of layers,
-and outputs a high dimensional reconstruction of the input.
+and outputs a high-dimensional reconstruction of the input.
 
 The \emph{bottleneck} is not a layer, but rather the middle of the autoencoder,
 where the activations are the lowest number of dimensions.
@@ -386,7 +386,7 @@ where the activations are the lowest number of dimensions.
 \paragraph{Training}
 Autoencoders are trained to reconstruct their input,
 that is, they learn the identity function. The loss is a natural metric
-on the data space, such as the mean squared error for real valued data.
+on the data space, such as the mean squared error for real-valued data.
 
 \begin{definition}
   The \emph{reconstruction loss} for an autoencoder $f$ on an input $x \in \Xx$
@@ -397,7 +397,7 @@ on the data space, such as the mean squared error for real valued data.
 \end{definition}
 
 To prevent overfitting and to perform a directly useful task,
-an autoencoder can be train to reconstruct a noisy or corrupted
+an autoencoder can be trained to reconstruct a noisy or corrupted
 version of the input.
 \begin{definition}
   The \emph{denoising loss} for an autoencoder $f$ on an input $x \in \Xx$ is
@@ -405,7 +405,7 @@ version of the input.
     \Ll_{\text{denoising}}(x) = \norm{x - f(x + \e)}^2
   \]
   where \e is a random vector of the same dimension as $x$, of white noise
-  whose variance is an hyperparmeter of the training setup.
+  whose variance is a hyperparameter of the training setup.
 
   Note that the denoising loss is stochastic, as it depends on the random
   vector \e. In practice, we use the compute the loss on one sample of \e
@@ -413,14 +413,14 @@ version of the input.
 \end{definition}
 
 \paragraph{Variational AutoEncoders (VAE)}
-A specific kind of autoencoders, and the one that will be
+A specific kind of autoencoder, and the one that will be
 used in all of the following experiments,
 are variational autoencoders,
-intruduced by \cite{Kingma2013AutoEncodingVB}
+introduced by \cite{Kingma2013AutoEncodingVB}
 Technically, they are not very different from regular autoencoders,
 but they come from a different background than data compression.
 Indeed, the hope is that VAEs model the process from which the data was generated.
-Oftentimes, we expect a datapoint (for instance the image of a leaf) to be determined
+Often, we expect a datapoint (for instance the image of a leaf) to be determined
 only by \textit{a few} variables (for instance, the species of the tree, its age,
 the season, the angle at which the picture was taken etc.).
 We will call $P$, the vector of those few variables that generate the datapoint.
@@ -467,12 +467,12 @@ a distribution $Q$ over the data space.
   \]
 \end{remark}
 
-Here, the likelyhood loss is conceptually equivalent to
+Here, the likelihood loss is conceptually equivalent to
 the reconstruction loss of a regular autoencoder,
 and the regularisation loss is used to
 have a latent representation that is close to a normal distribution.
 It makes it easier to sample latent representations and
-corresponds to the assumtion that the underlying variables
+corresponds to the assumption that the underlying variables
 are normally distributed.
 
 \subsection{Setup}
@@ -481,12 +481,12 @@ I used two different variational autoencoders, one for each dataset and classifi
 
 \paragraph{MNIST}
 On the MNIST dataset, I trained a small convolutional autoencoder with a bottleneck of size 4,
-which has reconstructs the images with an average per-pixel error of $7.3\,\%$.
+which reconstructs the images with an average per-pixel error of $7.3\,\%$.
 \todo{Show architecture}
 
 % \paragraph{CIFAR-10}
 % On the CIFAR-10 dataset, I trained a medium convolutional autoencoder with a bottleneck of size ???,
-% which has reconstructs the images with an average per-pixel error of $???$.
+% which reconstructs the images with an average per-pixel error of $???$.
 % \todo{add error rate}
 
 \paragraph{ImageNet}
@@ -501,9 +501,9 @@ refers to a variational autoencoder.
 
 
 
-\subsection{Autoencoders as a defense mechanism}
+\subsection{Autoencoders as a defence mechanism}
 Autoencoders can be used to prevent adversarial attacks
-against classifier by prepocessing images through the autoencoder.
+against classifiers by prepocessing images through the autoencoder.
 The setup is shown in \autoref{fig:ae_defense}.
 
 \begin{figure}[h]
@@ -552,7 +552,7 @@ The setup is shown in \autoref{fig:ae_defense}.
 
   \end{tikzpicture}
 
-  \caption{Autoencoder used as a defense against adversarial attacks}
+  \caption{Autoencoder used as a defence against adversarial attacks}
   \label{fig:ae_defense}
 \end{figure}
 
@@ -560,19 +560,19 @@ The hope is that an adversarial perturbation of the input
 will not pass through the bottleneck of the autoencoder,
 and thus will not be able to fool the classifier.
 Indeed, the bottleneck is small, and therefore information
-constrained, so we expect to the autoencoder to
+constrained, so we expect the autoencoder to
 not faithfully reconstruct patterns that it has never seen
-during training. In particular, we expect the latent respresentation
+during training. In particular, we expect the latent representation
 of an adversarial input to be the same as the representation of
 the original input, and thus the autoencoder should reconstruct the
 original input when fed the adversarial one.
 
-\todo{Maybe add a plot for distance between latent representations of clean vs adversarial}
+\todo{Maybe add a plot for the distance between latent representations of clean vs adversarial}
 % Vary:
 % - autoencoder/task
 % - pairs of inputs
 % Histogram with:
-% - line 1: distance between latent representation of original and adversarial
+% - line 1: distance between the latent representation of original and adversarial
 % - line 2: distance between random pairs
 % - line 3: distance between random pairs of the same class
 
@@ -582,14 +582,14 @@ original input when fed the adversarial one.
 Passing the adversarial images from \autoref{table:dataset_sizes},
 through the autoencoder, we can see that the autoencoder
 lessens the visual noise on the images as seen in \autoref{fig:ae_examples}.
-This happens both because the images is compressed then decompressed,
+This happens both because the images are compressed then decompressed,
 and because the autoencoders were trained to reconstruct noisy images.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{../images/ae_examples.png}
   \caption{
-    Examples of the autoencoder defense.
+    Examples of the autoencoder defence.
     \emph{Left}: first 2 images of each dataset.
     \emph{2nd column}: original images passed through the autoencoder.
     \emph{3rd column}: adversarial images, produced by FSGM with $\epsilon = 10/ 255$.
@@ -626,14 +626,14 @@ This is an instance of the tradeoff between accuracy and robustness.
   \label{table:ae_examples_confidence}
 \end{table}
 
-However, this is a very simple baseline defense, which relies on the attacker
+However, this is a very simple baseline defence, which relies on the attacker
 not knowing about the autoencoder, or not having access to it,
-and there are attacks that work even in this case.
+and some attacks work even in this case.
 \todo{Add reference to the paper that does this}
 
-More sophisticated defenses can be designed, and many have been proposed.
+More sophisticated defences can be designed, and many have been proposed.
 One can randomly pick an autoencoder from a pool of autoencoders,
-add noise to the input, take the median of output of many autoencoders,
+add noise to the input, take the median of the output of many autoencoders,
 or use other compression metrics such as JPEG \cite{Shin2017JPEGresistantAI}
 or reducing the precision of the image.
 \todo{Add reference to the paper that does this}
@@ -653,13 +653,13 @@ to be considered secret.
 
 \subsection{Attacking through autoencoders}
 
-In a setting where an attacker knows the autoencoder placed as a defense
-in front of the classifier, one can wonder what type of attacks exists.
+In a setting where an attacker knows the autoencoder placed as a defence
+in front of the classifier, one can wonder what type of attack exists.
 It seemed to me that it would be hard to generate an adversarial perturbation
-as the output of an autoencoder, since this model has never been trained
-to produce this kind of structure. On the other hand, I tought that it would
-be easier to make the autoencoder produce an entierly different image.
-My advisor expecting it to be hard to make an autoencoder produce a different
+as the output of an autoencoder since this model has never been trained
+to produce this kind of structure. On the other hand, I thought that it would
+be easier to make the autoencoder produce an entirely different image.
+My advisor expected it to be hard to make an autoencoder produce a different
 image, I set out to prove it wrong.
 
 \paragraph{}
@@ -698,7 +698,7 @@ There are two natural attacks to try:
 
 
 We show in \autoref{fig:ae_attack_examples} two examples of attacks
-agains the composition of the autoencoder and classifier.
+against the composition of the autoencoder and classifier.
 The most interesting thing to note is that the visuals of the
 adversarial images are very different on the two datasets:
 \begin{itemize}
@@ -708,7 +708,7 @@ adversarial images are very different on the two datasets:
     from the original image, but the classifier predicts a different label.
 \end{itemize}
 
-Therefore, both kinds of attacks mechanisms are possible. It is possible to transform an image through an autoencoder
+Therefore, both kinds of attack mechanisms are possible. It is possible to transform an image through an autoencoder
 into something that a human would recognise as different
 (or at least for this specific small VAE on MNIST), but it is also possible
 to make an autoencoder produce an adversarial image.
@@ -745,11 +745,11 @@ Probably not.
 The attack on MNSIT seems to always either not work or produce
 a different image through the VAE. One could try to make the autoencoder
 output and adversarial perturbation by adding a term to the reconstruction
-loss of the autoencoder. This would encorage the autoencoder to produce
+loss of the autoencoder. This would encourage the autoencoder to produce
 an image that is close to its input.
-However, I could not make this to work, even when allowing the perturbation
-arbirtarily large. Some options that I did not try are using different schedules for
-the loss components or using attacks methods not mentions in this report.
+However, I could not make this work, even when allowing the perturbation
+arbitrarily large. Some options that I did not try are using different schedules for
+the loss components or using attack methods not mentioned in this report.
 
 The other question left is whether the ImageNet autoencoder can produce
 and image that is completely different from the input.
@@ -761,7 +761,7 @@ and image that is completely different from the input.
   \centering
   \includegraphics[width=0.6\textwidth]{../images/ae_targeted_attack_example.png}
   \caption{
-    Example of a targeted attack that producing a different image
+    An example of a targeted attack that producing a different image
     through the autoencoder.
     The output image is almost correctly classified by the ResNet50,
     with 41\,\% "strainer" and "10\,\% "Petri dish" (the correct one).
@@ -789,7 +789,7 @@ This was not an easy task, but is possible with a few tricks and caveats:
       \item An attack with a lower norm (lower \e) is easier to get by setting \e high at first,
         then lowering it.
     \end{enumerate}
-  \item The fact that the autoencoder is a VAE, and thus stockastic did not seem to
+  \item The fact that the autoencoder is a VAE, and thus stochastic did not seem to
     play an important role in the attack, even though it was for getting FGSM to work on
     the smaller tasks.
 \end{itemize}
@@ -810,7 +810,7 @@ This was not an easy task, but is possible with a few tricks and caveats:
 The attacks seen in \autoref{fig:ae_targeted_attack_example} and
 \ref{fig:ae_targeted_attack_example2}
  are all iterated FGSM attacks,
-produced with 3 steps with different hyperparmeters:
+produced with 3 steps with different hyperparameters:
 % \begin{itemize}
 %   \item 600 iterations, $\e = 80 / 255$, $\text{l2\_penalty} = 0.1$, $lr = 0.04$
 %   \item 300 iterations, $\e = 80 / 255$, $\text{l2\_penalty} = 0.5$, $lr = 0.01$
@@ -832,7 +832,7 @@ produced with 3 steps with different hyperparmeters:
   Attacking an autoencoder to produce a different image, can be detected
   very easily, by checking if the reconstruction loss is high.
   This seems to be a good sanity check to have in place when using
-  an autoencoder as a defense mechanism.
+  an autoencoder as a defence mechanism.
 \end{remark}
 
 \clearpage
@@ -840,7 +840,7 @@ produced with 3 steps with different hyperparmeters:
 
 Seeing the attacks that produce a completely different image
 through the autoencoder, I was reminded of chaos theory,
-as we have an small perturbation of the input that produces
+as we have a small perturbation of the input that produces
 large changes in the output.
 I wondered if there was a nicely defined Lyapunov exponent
 that applied to this system or maybe to many neural networks.
@@ -867,7 +867,7 @@ Well, if one thing is clear, it's that it's not clear on \autoref{fig:ae_attack_
 Indeed, the norm of the activations varies by several orders of magnitude
 between layers and mediates strongly the distance between the activations.
 It might be surprising at first that the norms go as high as $200\,000$,
-but the size of those tensors also reach 16 million elements.
+but the size of those tensors also reaches 16 million elements.
 
 \begin{figure}[H]
   \centering
@@ -882,8 +882,8 @@ but the size of those tensors also reach 16 million elements.
   \label{fig:ae_attack_distances_normalized}
 \end{figure}
 
-Surprisingly, when normalising, we have very clear spike at the end of the encoder.
-This spike is present on every of the 12 attacks.
+Surprisingly, when normalising, we have a very clear spike at the end of the encoder.
+This spike is present in every of the 12 attacks.
 And corresponds to the output of the attention, before normalisation
 and before the last three convolutions of the encoder.
 
@@ -906,9 +906,9 @@ even more clearly, a single layer where the norm of the activations is about
 4 times larger than the average norm of the dataset.
 There is also much more variance in the norm of activations
 on adversarial images than on clean images, whose blue
-bars can barely be seen on the plot.
+bars can barely be seen in the plot.
 
-This gives an straightforward way to detect this kind of adversarial
+This gives a straightforward way to detect this kind of adversarial
 attacks: pass the image through the autoencoder and check if the
 norm of the activations at this layer is larger than usual.
 
@@ -927,9 +927,9 @@ I tried the same experiment on the MNIST autoencoder
 whose results are shown in
 \autoref{fig:ae_activation_norm_mnist}
 but could not get a good autoencoder running on CIFAR10.
-On MNIST, there is no clear spike, and the norms of adversarial
+On MNIST, there is no clear spike and the norms of adversarial
 activations are even a little bit smaller than the norms of clean activations.
-However, this is an artifact of the choice of the attacks to plot,
+However, this is an artefact of the choice of the attacks to plot,
 and other attacks did not show this pattern.
 
 Overall, this suggests that the phenomenon is either specific
@@ -966,9 +966,9 @@ passed through the autoencoder.
   }
 \end{figure}
 
-Note that making birds disapear is something humans have been really good at,
+Note that making birds disappear is something humans have been really good at,
 without the help of neural networks.
-60\% of european land birds have disappeared between 1980 and 2016
+60\% of European land birds have disappeared between 1980 and 2016
 \cite{Rigal2023FarmlandPA}, for a total of 800 million birds.
 
 However, making a bird appear out of thin air is something that
@@ -978,7 +978,7 @@ only the best of magicians have been able to do.
   \centering
   \includegraphics[width=0.8\textwidth]{../images/bird-resurected.png}
   \caption{
-    A bird appearing out of thin air.
+    A bird appears out of thin air.
   }
 \end{figure}
 
